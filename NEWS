@@ -1,3 +1,10 @@
+FetchmailMon - 0.5 (2003-09-26)
+  The syslog scanner has been improved to correct a BIG bug.
+  The usability is now really improved.
+
+  The look of wmfetchmailmon has been modified: the char width of the 'size'
+  line have been reduced in order to display little more characters.
+
 FetchmailMon - 0.4 (2003-09-25)
   wmfetchmailmon tool has been revised:
   - login and server informations are now displayed on two separated fields
