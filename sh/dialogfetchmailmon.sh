@@ -33,7 +33,7 @@ esac
 
 previous_email=""
 
-$TXTFETCHMAILMON |\
+$TXTFETCHMAILMON "$@" |\
   sed 's/^\(.*\): .*(\([0-9]*\)%), \([0-9]*\)%.*$/\1 \2 \3/' |\
   while read email number size
   do
