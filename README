@@ -11,16 +11,39 @@ Introduction
   /var/log/mail.log in order to decide if the dialup connection
    could be closed.
 
-  Now, FetchmailMon is in its early stages: only one tool is
-  available and it's not graphic. It is a simple tool that read
-  /var/log/mail.log on it's input and rewrite informations in it's
-  ouput (not possible to do simplier).
+  Three 'tools' are available.
+  First is a simple (trivial) text based tool that read /var/log/mail.log
+  on it's input and rewrite reformated informations in it's ouput (not
+  possible to do simplier).
+  Second is a script which uses the 'dialog' tool to render the output of
+  the first.
+  Third is a better achieve one: a WindowMaker dockapp. Of course, it can
+  be used on others window managers.
 
 Platform
 
   This program was written on and for Linux/Intel/ELF/libc6.
   It should compile cleanly on any ANSI-C environment.
 
+Compilation
+
+  Classic "./configure ; make ; make install", but 'configure' step require
+  --with-wmapp option.
+
+  This option is mandatory because wmfetchmailmon requires WMApp which is
+  only in early stages, ie development.
+  In order to build wmfetchmailmon, you have to download, extract and compile
+  WMApp. Then, you can compile fetchmailmon, indicating the path to WMApp
+  source tree with '--with-wmapp' option. Take care to use an absolute
+  path name.
+
+  For example, imagine you extract WMApp in /tmp (because it's just for
+  compilation, a temporary usage). Your 'configure' command line will look
+  something like:
+  % ./configure --with-wmapp=/tmp/wmapp-x.y.z
+
+  Check INSTALL file for any generic informations about 'configure' usage.
+  
 Warranties
 
   The authors provides no warranties for this software.

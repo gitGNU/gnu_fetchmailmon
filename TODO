@@ -4,3 +4,7 @@
 * any others
 
 * Better C++: istream, ...
+
+* wmfetchmailmon
+  + consume any available lines in one step
+  + add an option to controll the delay between two read

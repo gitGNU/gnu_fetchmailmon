@@ -1,0 +1,14 @@
+2003-09-21  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* README: Add wmfetchmailmon and compilation instructions.
+
+	* configure.in: Add x_includes and x_libraries to locate X files.
+	Add wmapp_includes and wmapp_libraries to locate WMApp files.
+
+2003-09-17  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* configure.in (PACKAGE_MENU_DIR): new sh dir.
+	(PACKAGE_MENU_DIR): add dialogfetchmailmon man page.
+
+	* Makefile.am (SUBDIRS): new sh dir.
+
