@@ -24,7 +24,7 @@ AC_HEADER_STDC
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_ISC_POSIX
-AC_C_CONST
+dnl do not work AC_C_CONST
 
 dnl Checks for library functions.
 dnl Checks for Additional stuffs.
@@ -64,6 +64,15 @@ fi
 
 dnl AC_CHECK_HEADERS(wmapp.h,,AC_MSG_ERROR("WMApp library required"))
 
+dnl mail.log filename
+if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
+then
+  AC_DEFINE(DEFAULT_MAILLOG_FILENAME,"/var/log/mail.log","Absolute filename to system mail log.")
+else
+  AC_DEFINE(DEFAULT_MAILLOG_FILENAME,"$DEFAULT_MAILLOG_FILENAME","Absolute filename to system mail log.")
+fi
+dnl We also need this variable to update the man pages
+AC_SUBST(DEFAULT_MAILLOG_FILENAME)
 
 dnl Set PACKAGE SOURCE DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`

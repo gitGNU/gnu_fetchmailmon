@@ -1,5 +1,11 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader 2.13.  */
 
+/* Define to the correct path for your system. */
+#undef DEFAULT_MAILLOG_FILENAME
+
+/* Define to empty if the keyword does not work.  */
+/* #undef const */
+
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 

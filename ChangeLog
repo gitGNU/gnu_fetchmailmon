@@ -1,3 +1,9 @@
+2003-09-26  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* README: DEFAULT_MAILLOG_FILENAME usage
+
+	* configure.in: Add DEFAULT_MAILLOG_FILENAME var
+
 2003-09-21  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
 
 	* README: Add wmfetchmailmon and compilation instructions.
