@@ -1,3 +1,8 @@
+FetchmailMon - 0.4 (2003-09-25)
+  wmfetchmailmon tool has been revised:
+  - login and server informations are now displayed on two separated fields
+  - for performance reasons, progress bar are no more gradients
+
 FetchmailMon - 0.3 (2003-09-21)
   New wmfetchmailmon tool: WindowMaker dockapp (docked application)
 
