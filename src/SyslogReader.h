@@ -19,46 +19,67 @@
 #ifndef SYSLOG_READER_H
 #define SYSLOG_READER_H
 
-#include <cstdlib>
-#include <cstring>
-#include "Controller.h"
- 
+#include <string>
+
+using namespace std;
+
 /**
- * Generic controller for IHM.
+ * Reader for syslog file.
  *
- * It defines the 'events' that can occurs.
+ * It handles the possible 'rotation' of the file.
  */
 class SyslogReader
 {
  public:
-  SyslogReader()
-    : _controller(NULL)
-    {}
-  ~SyslogReader(){}
+  typedef enum {
+    FROM_BEGIN, //< The file is read from its first character
+    FROM_END    //< The file reading start after the current last character
+  } StartPosition;
+
+  SyslogReader(const char *filename, StartPosition position=FROM_END);
+
+  ~SyslogReader();
 
   /**
-   * Set a controller to inform.
+   * Get the new line
    */
-  void setController(Controller *controller)
-    { _controller = controller; }
-
-  /**
-   * Scan a new line.
-   *
-   *@param line a complete line
-   */
-  void scanLine(const char *line);
-
-  bool scanNewFetch(const char *line);
-  bool scanNewMessage(const char *line);
-  bool scanMessageFlushed(const char *line);
+  const char *getLine();
 
  private:
+  /**
+   * Check if something need to be read.
+   */
+  bool toBeRead();
 
   /**
-   * The current controller
+   * Open the file.
    */
-  Controller *_controller;
+  void openFile();
+
+  /**
+   * Close the file.
+   */
+  void closeFile();
+
+  /**
+   * The current filename to control.
+   */
+  string _filename;
+
+  /**
+   * The current file descriptor.
+   */
+  FILE* _file;
+
+  /**
+   * The required starting position.
+   */
+  StartPosition _position;
+
+  /**
+   * Last line read.
+   */
+  string _lastReadLine;
 };
 
 #endif /*  SYSLOG_READER_H */

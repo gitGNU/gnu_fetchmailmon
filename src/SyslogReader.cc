@@ -17,158 +17,138 @@
  */
 
 #include <cstdio>
+#include <cstdlib>
 #include <cctype>
 #include <cstring>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <errno.h>
 
 using namespace std;
 
 #include "SyslogReader.h"
-#include "SyntaxError.h"
 
-/**
- * Scan a new line.
- *
- *@param line a complete line
- */
+SyslogReader::SyslogReader(const char *filename, SyslogReader::StartPosition position)
+  : _filename(filename), _file(NULL), _position(position), _lastReadLine("")
+{}
+
+SyslogReader::~SyslogReader()
+{ closeFile(); }
+
+const char *
+SyslogReader::getLine()
+{
+  bool toRead = false;
+  const char *result = NULL;
+
+  _lastReadLine.assign("");
+
+  toRead = toBeRead();
+  if (toRead == true)
+    {
+      char buff[BUFSIZ];
+      // Perhaps the line is not complete
+      // (larger than the buff size).
+      // So we read until a end-of-line char
+      do
+        {
+          if (fgets(buff, BUFSIZ, _file) != NULL)        
+            _lastReadLine.append(buff);
+          else
+            // We enforce an end-of-line to avoid an infinite loop
+            _lastReadLine.append("\n");
+        }
+      while (_lastReadLine[_lastReadLine.size() - 1] != '\n');
+
+      // Remove the end-of-line
+      if (_lastReadLine[_lastReadLine.size() - 1] == '\n')
+        _lastReadLine.erase(_lastReadLine.begin() + _lastReadLine.size() - 1);
+
+      result = _lastReadLine.c_str();
+    }
+
+  return result;
+}
+
+bool
+SyslogReader::toBeRead()
+{
+  if (_file == NULL)
+    openFile();
+
+  if (_file == NULL)
+    // No file to read
+    return false;
+
+  struct stat statFile;
+  if (fstat(fileno(_file), &statFile) != 0)
+    {
+      cerr << "Error(toBeRead().fstat()): "
+           << strerror(errno) << endl;
+      return false;
+    }
+  
+  // Compare the sizes
+  long readSize = ftell(_file);
+  if (statFile.st_size > readSize)
+    return true;
+  else
+    {
+      // Perhaps the file has been rotated
+      struct stat statOnDisk;
+      if (stat(_filename.c_str(), &statOnDisk) != 0)
+        {
+          if (errno != ENOENT)
+            return false;
+          else
+            {
+              cerr << "Error(toBeRead().stat(" << _filename << ")): "
+                   << strerror(errno) << endl;
+              return false;
+            }
+        }
+
+      // Compare if files are differents
+      if (statOnDisk.st_ino != statFile.st_ino)
+        {
+          closeFile();
+          openFile();
+          return true;
+        }
+    }
+
+  return false;
+}
+
 void
-SyslogReader::scanLine(const char *line)
+SyslogReader::openFile()
 {
-  //------------------------------------------------
-  // First, we have to find the begin of the message
-  //------------------------------------------------
-  char *begin = NULL;
-  // Jump all the logging informations
-  // Such informations are like the following:
-  //Sep  8 18:58:12 hercules fetchmail[569]:
-  begin = strchr(line, '[');
-  if (begin == NULL)
-    return;
-  begin = strchr(begin, ':');
-  if (begin == NULL)
-    return;
-  begin++;
-  
-  // Jump spaces
-  while (isspace(*begin))
-    begin++;
+  static bool firstTime = true;
 
-  bool ret;
-  ret = scanNewFetch(begin);
-  if (ret == false)
-    ret = scanNewMessage(begin);
-  if (ret == false)
-    ret = scanMessageFlushed(begin);
+  _file = fopen(_filename.c_str(),"r");
+  if (_file == NULL && errno != ENOENT)
+    {
+      cerr << "Error: openFile(): " << strerror(errno);
+      exit(EXIT_FAILURE);
+    }
+  if (_file != NULL && firstTime == true)
+    {
+      firstTime = false;
+      if (_position == SyslogReader::FROM_END)
+        {
+          fseek(_file, 0, SEEK_END);
+        }
+    }
 }
 
-bool
-SyslogReader::scanNewFetch(const char *line)
+void
+SyslogReader::closeFile()
 {
-  // 21 messages for guilhem.bonnefille at Pop.free.fr (88123 octets).
-  // 1 message for guilhem.bonnefille at Pop.free.fr (3242 octets). 
+  if (_file != NULL)
+    fclose(_file);
 
-  int ret = 0;
-  int number = 0;
-  char login[BUFSIZ];
-  char server[BUFSIZ];
-  int size = 0;
-
-  ret = sscanf(line, "%d %*s for %s at %s (%d octets).",
-               &number, login, server, &size);
-
-  if (ret == 4)
-    {
-      // Line is as expected
-      _controller->newFetch(number, login, server, size);
-      return true;
-    }
-  else
-    return false;
-}
-
-bool
-SyslogReader::scanNewMessage(const char *line)
-{
-  // reading message guilhem.bonnefille@Pop.free.fr:21 of 32 (3019 octets)
-  
-  const char *READING_WORD = "reading";
-
-  char login[BUFSIZ];
-  char server[BUFSIZ];
-  int index = 0; // Index of the current message
-  int number = 0; // Number of messages to download
-  int size = 0; // Size of the current message
-
-  char *ptr = NULL;
-  int ret = 0;
-
-  // Check if the first word is the one expected
-  ret = strncmp(line, READING_WORD, strlen(READING_WORD));
-  if (ret == 0)
-    {
-      // The line is as expected
-      // Collect all others informations
-      // Jump 'reading' word
-      line += strlen(READING_WORD);
-      // Jump space
-      line++;
-      // Jump following word
-      line = strchr(line, ' ');
-      if (line == NULL)
-        throw new SyntaxError("'reading message' log not supported.");
-      line++;
-
-      // The login
-      ptr = strchr(line, '@');
-      if (ptr == NULL)
-        throw new SyntaxError("'reading message' log not supported.");
-      strncpy(login, line, ptr - line);
-      // Add the missing nul character
-      login[ptr - line] = '\0';
-
-      line = ptr + 1;
-
-      // The server
-      ptr = strchr(line, ':');
-      if (ptr == NULL)
-        throw new SyntaxError("'reading message' log not supported.");
-      strncpy(server, line, ptr - line);
-      // Add the missing nul character
-      server[ptr - line] = '\0';
-
-      line = ptr + 1;      
-
-      // Numbers and sizes
-      ret = sscanf(line, "%d of %d (%d octets)",
-                   &index, &number, &size);
-      if (ret != 3)
-        throw new SyntaxError("'reading message' log not supported.");
-
-      // Inform the controller
-      _controller->newMessage(login, server, index, number, size);
-
-      return true;
-    }
-  else
-    return false;
-}
-
-bool
-SyslogReader::scanMessageFlushed(const char *line)
-{  
-  const char *FLUSH_WORD = "flushed";
-  int ret = 0;
-
-  // Check if the first word is the one expected
-  ret = strncmp(line, FLUSH_WORD, strlen(FLUSH_WORD));
-  if (ret == 0)
-    {
-      // The line is as expected
-
-      // Inform the controller
-      _controller->messageFlushed();
-
-      return true;
-    }
-  else
-    return false;
+  _file = NULL;
 }
