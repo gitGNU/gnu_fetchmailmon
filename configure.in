@@ -67,10 +67,9 @@ dnl AC_CHECK_HEADERS(wmapp.h,,AC_MSG_ERROR("WMApp library required"))
 dnl mail.log filename
 if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
 then
-  AC_DEFINE(DEFAULT_MAILLOG_FILENAME,"/var/log/mail.log","Absolute filename to system mail log.")
-else
-  AC_DEFINE(DEFAULT_MAILLOG_FILENAME,"$DEFAULT_MAILLOG_FILENAME","Absolute filename to system mail log.")
+  DEFAULT_MAILLOG_FILENAME="/var/log/mail.log"
 fi
+AC_DEFINE_UNQUOTED(DEFAULT_MAILLOG_FILENAME,"$DEFAULT_MAILLOG_FILENAME",[Absolute filename to system mail log.])
 dnl We also need this variable to update the man pages
 AC_SUBST(DEFAULT_MAILLOG_FILENAME)
 
