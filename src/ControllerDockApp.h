@@ -109,16 +109,6 @@ class ControllerDockApp : public Controller
 
  private:
   /**
-   * The login used.
-   */
-  string _login;
-
-  /**
-   * The server contacted.
-   */
-  string _server;
-
-  /**
    * Number of messages to download.
    */
   int _nbMessages;
