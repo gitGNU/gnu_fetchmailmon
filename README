@@ -42,6 +42,9 @@ Compilation
   something like:
   % ./configure --with-wmapp=/tmp/wmapp-x.y.z
 
+  Also, you can change the default filename to the log with:
+  % env DEFAULT_MAILLOG_FILENAME=your_path ./configure ...
+
   Check INSTALL file for any generic informations about 'configure' usage.
   
 Warranties
