@@ -1,3 +1,7 @@
+2003-09-27  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* txtfetchmailmon.1.in, dialogfetchmailmon.1.in, wmfetchmailmon.1.in: command line options
+
 2003-09-21  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
 
 	* wmfetchmailmon.1.in: new wmfetchmailmon tool man page

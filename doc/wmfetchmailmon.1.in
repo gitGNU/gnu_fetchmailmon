@@ -2,7 +2,7 @@
 .SH NAME
 wmfetchmailmon \- WindowMaker dockapp (docked application)
 .SH SYNOPSIS
-.BI "wmfetchmailmon < /var/log/mail.log"
+.BI "wmfetchmailmon [-v] [-h] [file]"
 .sp
 .SH DESCRIPTION
 The
@@ -32,6 +32,17 @@ It's possible you have difficulties accessing to /var/log/mail.log (permission
 denied).
 You will probably have to add your current login to the 'adm' group (or
 anything else following your GNU/Linux distribution).
+
+.SH OPTIONS
+.TP
+\-v
+Show version informations and terminate.
+.TP
+\-h
+Show help (usage) and terminate.
+.TP
+file
+Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
 
 .SH "SEE ALSO"
 .BR fetchmail (1),

@@ -2,7 +2,7 @@
 .SH NAME
 txtfetchmailmon \- synthetic rewrite of mail.log
 .SH SYNOPSIS
-.BI "txtfetchmailmon < /var/log/mail.log"
+.BI "txtfetchmailmon [-v] [-h] [file]"
 .sp
 .SH DESCRIPTION
 The
@@ -10,6 +10,17 @@ The
 program rewrite the log produced by
 .B fetchmail
 in a simplier and automatically comprehensive format.
+
+.SH OPTIONS
+.TP
+\-v
+Show version informations and terminate.
+.TP
+\-h
+Show help (usage) and terminate.
+.TP
+file
+Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
 
 .SH "SEE ALSO"
 .BR fetchmail (1)

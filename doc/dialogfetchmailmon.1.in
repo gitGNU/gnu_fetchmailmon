@@ -2,7 +2,7 @@
 .SH NAME
 dialogfetchmailmon \- 'dialog' interface to txtfetchmailmon
 .SH SYNOPSIS
-.BI "dialogfetchmailmon [-size|-number] < /var/log/mail.log"
+.BI "dialogfetchmailmon [-size|-number] [file]"
 .sp
 .SH DESCRIPTION
 The
@@ -32,6 +32,9 @@ This is most representative of the time to go.
 \-number
 The progression bar represents a percentage based on the number of emails.
 (DEFAULT)
+.TP
+file
+Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
 
 .SH "SEE ALSO"
 .BR fetchmail (1),
