@@ -36,7 +36,7 @@ checkInput(const WMApp *a, void *param)
   SyslogReader *syslog = (SyslogReader *)param;
   char line[BUFSIZ + 1];	// read line
 
-  if (fgets (line, BUFSIZ, input) != NULL)
+  while (fgets (line, BUFSIZ, input) != NULL)
     {
       syslog->scanLine(line);
     }
