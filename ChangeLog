@@ -1,0 +1,7 @@
+2003-09-17  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* configure.in (PACKAGE_MENU_DIR): new sh dir.
+	(PACKAGE_MENU_DIR): add dialogfetchmailmon man page.
+
+	* Makefile.am (SUBDIRS): new sh dir.
+

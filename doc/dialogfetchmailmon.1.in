@@ -1,0 +1,58 @@
+.TH dialogfetchmailmon 1 "@PACKAGE@ @VERSION@"
+.SH NAME
+dialogfetchmailmon \- 'dialog' interface to txtfetchmailmon
+.SH SYNOPSIS
+.BI "dialogfetchmailmon [-size|-number] < /var/log/mail.log"
+.sp
+.SH DESCRIPTION
+The
+.B dialogfetchmailmon
+is a simple interface to
+.B "txtfetchmailmon"\c.
+It uses the
+.B dialog
+program to display a progression bar.
+
+.SH OPTIONS
+.TP
+\-size
+The progression bar represents a percentage based on the email sizes.
+This is most representative of the time to go.
+.TP
+\-number
+The progression bar represents a percentage based on the number of emails.
+(DEFAULT)
+
+.SH "SEE ALSO"
+.BR fetchmail (1),
+.BR dialog (1),
+.BR txtfetchmailmon (1)
+
+.SH AUTHOR
+This program is developed by Guilhem Bonnefille. See 
+.I
+http://nathguil.free.fr/fetchmailmon/index.html
+for the latest version.
+Any correspondence relating to
+this program should be directed to:
+.br
+.I
+Guilhem Bonnefille \<guilhem.bonnefille@free.fr\>
+
+.SH COPYING
+Copyright (c) 1991 Free Software Foundation, Inc.
+.PP
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.

@@ -1,0 +1,4 @@
+2003-09-17  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* Makefile.am: add the dialogfetchamilmon man page
+

@@ -1,3 +1,6 @@
+FetchmailMon - 0.2 (2003-09-17)
+  New dialogfetchmailmon tool: use 'dialog' to display progress bar.
+
 FetchmailMon - 0.1 (2003-09-16)
 First release.
 For now it's really simple (text only) but graphic applets will come soon.

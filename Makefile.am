@@ -3,7 +3,7 @@
 ## If you don't want it to overwrite it,
 ## 	Please disable it in the Anjuta project configuration
 
-SUBDIRS = src doc
+SUBDIRS = src doc sh
 
 fetchmailmondocdir = ${prefix}/doc/fetchmailmon
 fetchmailmondoc_DATA = \
