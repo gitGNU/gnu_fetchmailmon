@@ -1,0 +1,5 @@
+2003-09-18  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* dialogfetchmailmon.sh: add GPL and copyright
+	remove the 'sleep' (testing only)
+
