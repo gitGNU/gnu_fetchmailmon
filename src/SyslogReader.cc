@@ -42,10 +42,10 @@ SyslogReader::scanLine(const char *line)
   //Sep  8 18:58:12 hercules fetchmail[569]:
   begin = strchr(line, '[');
   if (begin == NULL)
-    throw new SyntaxError("'[' not found.");
+    return;
   begin = strchr(begin, ':');
   if (begin == NULL)
-    throw new SyntaxError("':' not found.");
+    return;
   begin++;
   
   // Jump spaces
@@ -58,10 +58,6 @@ SyslogReader::scanLine(const char *line)
     ret = scanNewMessage(begin);
   if (ret == false)
     ret = scanMessageFlushed(begin);
-  /*
-  if (ret == 0)
-    nothing
-  */
 }
 
 bool
