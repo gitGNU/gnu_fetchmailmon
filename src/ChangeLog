@@ -1,4 +1,13 @@
+2003-09-27  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* version.h, version.cc: message version display
+	
+	* txtfetchmailmon.cc, wmfetchmailmon.cc: command line option processing
+
 2003-09-26  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* Makefile.am (txtfetchmailmon_SOURCES, wmfetchmailmon_SOURCES):
+	new MailLogScanner files.
 
 	* SyslogReader.cc (scanLine): When line is not as expected,
 	simply return (no exception throwed)

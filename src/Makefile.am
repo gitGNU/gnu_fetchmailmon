@@ -21,10 +21,14 @@ bin_PROGRAMS = txtfetchmailmon wmfetchmailmon
 
 txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.cc\
+	version.cc\
+	version.h\
 	Controller.cc\
 	Controller.h\
 	ControllerText.cc\
 	ControllerText.h\
+	MailLogScanner.cc\
+	MailLogScanner.h\
 	SyslogReader.cc\
 	SyslogReader.h\
 	SyntaxError.cc\
@@ -37,10 +41,14 @@ txtfetchmailmon_LDADD =
 
 wmfetchmailmon_SOURCES = \
 	wmfetchmailmon.cc\
+	version.cc\
+	version.h\
 	Controller.cc\
 	Controller.h\
 	ControllerDockApp.cc\
 	ControllerDockApp.h\
+	MailLogScanner.cc\
+	MailLogScanner.h\
 	SyslogReader.cc\
 	SyslogReader.h\
 	SyntaxError.cc\

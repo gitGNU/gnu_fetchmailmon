@@ -19,13 +19,15 @@
 
 #include <cstdio>
 
+#include <unistd.h>
+
 #include "wmapp.h"
 
-#include "SyslogReader.h"
+#include "version.h"
+#include "MailLogScanner.h"
 #include "ControllerDockApp.h"
 
-FILE *input = NULL;
-
+const char *file = NULL;
 
 /**
  * Timer fonction to check the input file.
@@ -33,12 +35,66 @@ FILE *input = NULL;
 void
 checkInput(const WMApp *a, void *param)
 {
-  SyslogReader *syslog = (SyslogReader *)param;
-  char line[BUFSIZ + 1];	// read line
+  MailLogScanner *scanner = (MailLogScanner *)param;
+  scanner->proceed();
+}
 
-  while (fgets (line, BUFSIZ, input) != NULL)
+/// Print the usage
+/// @param out file the usage must be printed.
+/// @param progName the name of the program.
+static void
+usage(FILE *out, const char *progName)
+{
+  fprintf(out, "USAGE: %s [-v] [-h] [file]\n", progName);
+}
+
+/**
+ *@param argc number of arguments
+ *@param argv arguments
+ */
+static void
+processArgs(int argc, char *argv[])
+{
+  extern int optind;
+  int c;
+  int nbErrors = 0;
+
+  while ((c = getopt(argc, argv, "vh")) != -1)
     {
-      syslog->scanLine(line);
+      switch (c)
+        {
+        case 'v': // Version is requested
+          version(stdout);
+          exit(EXIT_SUCCESS);
+          break;
+        case 'h': // Help is requested
+          usage(stdout, argv[0]);
+          exit(EXIT_SUCCESS);
+          break;
+        case '?':
+        default:
+          nbErrors++;
+          break;
+        }
+    }
+  
+  if (nbErrors > 0)
+    {
+      usage(stderr, argv[0]);
+      exit(EXIT_FAILURE);
+    }
+
+  if (optind < argc)
+    {
+      file = argv[optind];
+      optind++;
+    }
+
+  while (optind < argc)
+    {
+      cerr << "Warning: argument ignored: "<<  argv[optind]
+           << endl;
+      optind++;
     }
 }
 
@@ -52,17 +108,21 @@ main(int argc, char *argv[])
   // a WMApplication:
   WMApp::initialize(argc, argv);
 
-  SyslogReader syslog;
   ControllerDockApp dockapp;
+  MailLogScanner *scanner;
 
-  syslog.setController(&dockapp);
+  processArgs(argc, argv);
 
-  // For now, we simply use the stdin as input
-  input = stdin;
+  if (file != NULL)
+    scanner = new MailLogScanner(file, SyslogReader::FROM_BEGIN);
+  else
+    scanner = new MailLogScanner();
+
+  scanner->setController(&dockapp);
 
   dockapp.create();
 
-  dockapp.add_timed_function(10, checkInput, &syslog);
+  dockapp.add_timed_function(10, checkInput, scanner);
 
   // This makes everything go.
   dockapp.run();
