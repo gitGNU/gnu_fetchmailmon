@@ -1,3 +1,7 @@
+2003-09-21  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* wmfetchmailmon.1.in: new wmfetchmailmon tool man page
+
 2003-09-17  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
 
 	* Makefile.am: add the dialogfetchamilmon man page
