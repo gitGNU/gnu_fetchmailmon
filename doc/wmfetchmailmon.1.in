@@ -7,7 +7,7 @@ wmfetchmailmon \- WindowMaker dockapp (docked application)
 .SH DESCRIPTION
 The
 .B wmfetchmailmon
-is a dockapp application rendering the /var/log/mail.log messages
+is a dockapp application rendering the @DEFAULT_MAILLOG_FILENAME@ messages
 in order to easily understand the fetchmail processing status.
 
 It displays (from top to botom):
@@ -28,8 +28,8 @@ the size (in bytes) retrieve comapred to the total size (for the current email a
 a progression bar displaying the previous information.
 
 .P
-It's possible you have difficulties accessing to /var/log/mail.log (permission
-denied).
+It's possible you have difficulties accessing to @DEFAULT_MAILLOG_FILENAME@
+(permission denied).
 You will probably have to add your current login to the 'adm' group (or
 anything else following your GNU/Linux distribution).
 
@@ -43,6 +43,11 @@ Show help (usage) and terminate.
 .TP
 file
 Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
+
+.SH FILES
+.TP
+@DEFAULT_MAILLOG_FILENAME@
+The default system messages file read.
 
 .SH "SEE ALSO"
 .BR fetchmail (1),

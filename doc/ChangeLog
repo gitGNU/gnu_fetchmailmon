@@ -1,3 +1,8 @@
+2003-10-05  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* dialogfetchmailmon.1.in, txtfetchmailmon.1.in, wmfetchmailmon.1.in: 
+	FILES section added
+
 2003-09-27  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
 
 	* txtfetchmailmon.1.in, dialogfetchmailmon.1.in, wmfetchmailmon.1.in: command line options

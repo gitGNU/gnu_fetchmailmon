@@ -22,6 +22,11 @@ Show help (usage) and terminate.
 file
 Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
 
+.SH FILES
+.TP
+@DEFAULT_MAILLOG_FILENAME@
+The default system messages file read.
+
 .SH "SEE ALSO"
 .BR fetchmail (1)
 
