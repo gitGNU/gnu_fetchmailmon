@@ -1,3 +1,8 @@
+FetchmailMon - 0.6 (2003-10-05)
+  All tools do not use the standard input but:
+  - expect file as comand line argument
+  - or use the default system file /var/log/mail.log
+
 FetchmailMon - 0.5 (2003-09-26)
   The syslog scanner has been improved to correct a BIG bug.
   The usability is now really improved.
