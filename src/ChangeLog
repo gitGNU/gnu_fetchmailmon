@@ -1,3 +1,15 @@
+2003-09-26  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* SyslogReader.cc (scanLine): When line is not as expected,
+	simply return (no exception throwed)
+
+	* ControllerDockApp.h, ControllerDockApp.h (class ControllerDockApp):
+	_login and _server strings suppressed
+
+	* ControllerDockApp.cc (refreshNumber, refreshSize):
+	"of" replaced by "/" (universal)
+	(create): font width of the "size" line is reduced to display more.
+
 2003-09-25  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
 
 	* ControllerDockApp.cc, ControllerDockApp.h:
