@@ -13,6 +13,16 @@ It uses the
 .B dialog
 program to display a progression bar.
 
+.B dialogfetchmailmon
+uses
+.B txtfetchmailmon
+to process mail.log file and extract data.
+If
+.B txtfetchmailmon
+is not on you path (testing?) you can set the
+.I TXTFETCHMAILMON
+environment variable.
+
 .SH OPTIONS
 .TP
 \-size
