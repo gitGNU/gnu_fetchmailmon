@@ -102,7 +102,6 @@ class ControllerDockApp : public Controller
   void add_timed_function(int period, WMCallback::data_func d, void *param);
 
  protected:
-  void refreshEmail();
   void refreshNumber();
   void refreshNumberBar();
   void refreshSize();
@@ -161,9 +160,14 @@ class ControllerDockApp : public Controller
   WMFrame frame;
 
   /**
-   * The text bar to display email processed.
+   * The text bar to display server processed.
    */
-  WMTextBar email;
+  WMTextBar server;
+
+  /**
+   * The text bar to display login processed.
+   */
+  WMTextBar login;
 
   /**
    * The text bar to display the current downloaded emails.

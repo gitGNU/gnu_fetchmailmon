@@ -53,8 +53,16 @@ ControllerDockApp::newFetch(int number,
                          const char *server,
                          int size)
 {
-  _login = login;
-  _server = server;
+  if (_login != login)
+    {
+      _login = login;
+      this->login.settext(login);
+    }
+  if (_server != server)
+    {
+      _server = server;
+      this->server.settext(server);
+    }
 
   // Set the number of messages to download
   _nbMessages = number;
@@ -65,7 +73,6 @@ ControllerDockApp::newFetch(int number,
   _sizeDownloaded = 0;
 
   // Refresh display
-  refreshEmail();
   refreshNumber();
   refreshNumberBar();
   refreshSize();
@@ -91,21 +98,36 @@ ControllerDockApp::newMessage(const char *login,
                            int number,
                            int size)
 {
-  _login = login;
-  _server = server;
+  if (_login != login)
+    {
+      _login = login;
+      this->login.settext(login);
+    }
+  if (_server != server)
+    {
+      _server = server;
+      this->server.settext(server);
+    }
 
   // Set the number of messages to download
   // Perhaps it has changed
-  _nbMessages = number;
+  if (_nbMessages != number)
+    {
+      _nbMessages = number;
+      numberbar.settotal(_nbMessages, false);
+    }
 
-  _sizeCurrent = size;
+  if (_sizeCurrent != size)
+    {
+      _sizeCurrent = size;
+      sizebar.settotal(_size, false);
+    }
 
   // Set the number of downloaded messages
   // NB: the current message is not downloaded
   _nbDownloadedMessages = index - 1;
 
   // Refresh display
-  refreshEmail();
   refreshNumber();
   refreshNumberBar();
   refreshSize();
@@ -136,20 +158,6 @@ ControllerDockApp::messageFlushed()
 
   // Request the application to repaint
   app.repaint();
-}
-
-
-/**
- * refresh the text bar displaying the email processed.
- */
-void
-ControllerDockApp::refreshEmail()
-{
-  string emailString;
-  emailString.assign(_login);
-  emailString.append("@");
-  emailString.append(_server);
-  this->email.settext(emailString.c_str());
 }
 
 /**
@@ -211,15 +219,17 @@ ControllerDockApp::create()
   frame.setpadding(0);
   frame.setborder(0);
 
-  email.setborder(0);
-  frame.addchild(email);
+  server.setborder(0);
+  frame.addchild(server);
+
+  login.setborder(0);
+  frame.addchild(login);
 
   number.setborder(0);
   frame.addchild(number);
 
   numberbar.setorientation(Orientation::Horizontal);
-  numberbar.setstyle(WMMeterBar::Spectrum);
-  numberbar.settotal(50, true);
+  numberbar.setstyle(WMMeterBar::Blue);
   numberbar.setborder(0);
   frame.addchild(numberbar);
 
@@ -227,12 +237,11 @@ ControllerDockApp::create()
   frame.addchild(size);
 
   sizebar.setorientation(Orientation::Horizontal);
-  sizebar.setstyle(WMMeterBar::Spectrum);
-  sizebar.settotal(50, true);
+  sizebar.setstyle(WMMeterBar::Blue);
   sizebar.setborder(0);
   frame.addchild(sizebar);
 
-  frame.setaspectratios();
+  frame.setaspectratios(2,2,2,1,2,1);
 
   // Attach the window to the application.
   app.addwindow(win);

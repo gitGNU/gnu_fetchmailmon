@@ -1,0 +1,18 @@
+2003-09-25  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* ControllerDockApp.cc, ControllerDockApp.h:
+	replace email field by server & login fields
+
+2003-09-22  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* wmfetchmailmon.cc (checkInput): Consume all lines available
+
+2003-09-21  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* Makefile.am (INCLUDES): add x_includes to locate X headers and wmapp_includes to locate WMApp headers
+	(wmfetchmailmon_LDADD): add x_libraries to locate X libraries and wmapp_libraries to locate WMApp libraries
+
+2003-09-19  Guilhem BONNEFILLE  <guilhem.bonnefille@laposte.net>
+
+	* ControllerDockApp.cc, ControllerDockApp.h, wmfetchmailmon.cc: 
+	new files for wmfetchmailmon
