@@ -33,8 +33,7 @@ using namespace std;
 #include "ControllerDockApp.h"
 
 ControllerDockApp::ControllerDockApp()
-  : _login(""), _server(""),
-    _nbMessages(0), _size(0),
+  : _nbMessages(0), _size(0),
     _nbDownloadedMessages(0), _sizeDownloaded(0),
     _sizeCurrent(0)
 {}
@@ -53,16 +52,10 @@ ControllerDockApp::newFetch(int number,
                          const char *server,
                          int size)
 {
-  if (_login != login)
-    {
-      _login = login;
-      this->login.settext(login);
-    }
-  if (_server != server)
-    {
-      _server = server;
-      this->server.settext(server);
-    }
+  if (this->login.text() != login)
+    this->login.settext(login);
+  if (this->server.text() != server)
+    this->server.settext(server);
 
   // Set the number of messages to download
   _nbMessages = number;
@@ -93,21 +86,15 @@ ControllerDockApp::newFetch(int number,
  */
 void
 ControllerDockApp::newMessage(const char *login,
-                           const char *server,
-                           int index,
-                           int number,
-                           int size)
+                              const char *server,
+                              int index,
+                              int number,
+                              int size)
 {
-  if (_login != login)
-    {
-      _login = login;
-      this->login.settext(login);
-    }
-  if (_server != server)
-    {
-      _server = server;
-      this->server.settext(server);
-    }
+  if (this->login.text() != login)
+    this->login.settext(login);
+  if (this->server.text() != server)
+    this->server.settext(server);
 
   // Set the number of messages to download
   // Perhaps it has changed
@@ -168,7 +155,7 @@ ControllerDockApp::refreshNumber()
 {
   ostringstream numberString;
   numberString << _nbDownloadedMessages
-               << " of "
+               << " / "
                << _nbMessages;
   this->number.settext(numberString.str().c_str());
 }
@@ -191,7 +178,7 @@ ControllerDockApp::refreshSize()
 {
   ostringstream sizeString;
   sizeString << _sizeDownloaded
-             << " of "
+             << " / "
              << _size;
   this->size.settext(sizeString.str().c_str());
 }
@@ -234,6 +221,8 @@ ControllerDockApp::create()
   frame.addchild(numberbar);
 
   size.setborder(0);
+  // A really lot informations to display
+  size.setfont(0);
   frame.addchild(size);
 
   sizebar.setorientation(Orientation::Horizontal);
