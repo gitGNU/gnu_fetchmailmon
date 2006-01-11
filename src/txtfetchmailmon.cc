@@ -18,6 +18,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <iostream>
 
 #include <unistd.h>
 
@@ -81,8 +82,8 @@ processArgs(int argc, char *argv[])
 
   while (optind < argc)
     {
-      cerr << "Warning: argument ignored: "<<  argv[optind]
-           << endl;
+      std::cerr << "Warning: argument ignored: "<<  argv[optind]
+           << std::endl;
       optind++;
     }
 }
@@ -103,7 +104,10 @@ main(int argc, char *argv[])
   scanner->setController(controller);
 
   while (1)
+  {
     scanner->proceed();
+    usleep(10000);
+  }
   
   return EXIT_SUCCESS;
 }

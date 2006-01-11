@@ -18,6 +18,7 @@
  */
 
 #include <cstdio>
+#include <iostream>
 
 #include <unistd.h>
 
@@ -92,8 +93,8 @@ processArgs(int argc, char *argv[])
 
   while (optind < argc)
     {
-      cerr << "Warning: argument ignored: "<<  argv[optind]
-           << endl;
+      std::cerr << "Warning: argument ignored: "<<  argv[optind]
+           << std::endl;
       optind++;
     }
 }

@@ -23,9 +23,11 @@ using namespace std;
 
 #include "SyntaxError.h"
 
+const char *SyntaxError::PREFIX = "Syntax error: ";
+
 const char *
 SyntaxError::what()
-  const
+  const throw()
 {
   // First call: make the message
   if (_message == NULL)

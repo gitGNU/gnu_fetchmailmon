@@ -31,16 +31,16 @@ class SyntaxError : public exception
   SyntaxError(const char *reason)
     : _reason(reason), _message(NULL)
     {}
-  ~SyntaxError(){}
+  ~SyntaxError() throw() {}
 
-  const char *what() const;
+  const char *what() const throw();
 
  private:
 
   /**
    * Prefix of the message
    */
-  static const char *const PREFIX = "Syntax error: ";
+  static const char *PREFIX;
 
   /**
    * The reason

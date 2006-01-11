@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -86,8 +87,8 @@ SyslogReader::toBeRead()
   struct stat statFile;
   if (fstat(fileno(_file), &statFile) != 0)
     {
-      cerr << "Error(toBeRead().fstat()): "
-           << strerror(errno) << endl;
+      std::cerr << "Error(toBeRead().fstat()): "
+           << strerror(errno) << std::endl;
       return false;
     }
   
@@ -105,8 +106,8 @@ SyslogReader::toBeRead()
             return false;
           else
             {
-              cerr << "Error(toBeRead().stat(" << _filename << ")): "
-                   << strerror(errno) << endl;
+              std::cerr << "Error(toBeRead().stat(" << _filename << ")): "
+                   << strerror(errno) << std::endl;
               return false;
             }
         }
