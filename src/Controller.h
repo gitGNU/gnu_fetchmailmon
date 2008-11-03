@@ -43,7 +43,7 @@ class Controller
   virtual void newFetch(int number,
                         const char *login,
                         const char *server,
-                        int size);
+                        int size) = 0;
 
   /**
    * A new message is comming.
@@ -58,12 +58,12 @@ class Controller
                           const char *server,
                           int index,
                           int number,
-                          int size);
+                          int size) = 0;
   
   /**
    * Previous message completly downloaded.
    */
-  virtual void messageFlushed();
+  virtual void messageFlushed() = 0;
 };
 
 #endif /* CONTROLLER_H */

@@ -18,6 +18,7 @@
 
 #include <cstdlib> 
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -32,10 +33,10 @@ SyntaxError::what()
   // First call: make the message
   if (_message == NULL)
     {
-      int length = strlen(PREFIX) + _reason.size() + 1;
+      int length = ::strlen(PREFIX) + _reason.size() + 1;
       _message = (char*)malloc(sizeof(char)*length);
-      strcpy(_message, PREFIX);
-      strcat(_message, _reason.c_str());
+      ::strcpy(_message, PREFIX);
+      ::strcat(_message, _reason.c_str());
     }
 
   return _message;

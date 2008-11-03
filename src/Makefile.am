@@ -10,7 +10,6 @@ txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.cc\
 	version.cc\
 	version.h\
-	Controller.cc\
 	Controller.h\
 	ControllerText.cc\
 	ControllerText.h\
