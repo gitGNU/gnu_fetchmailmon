@@ -4,7 +4,13 @@
 ## If you don't want it to overwrite it,
 ## 	Please disable it in the Anjuta project configuration
 
-bin_PROGRAMS = txtfetchmailmon 
+bin_PROGRAMS = fetchmailmond txtfetchmailmon 
+
+fetchmailmond_SOURCES = \
+	fetchmailmond.cc
+
+fetchmailmond_CXXFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
+fetchmailmond_LDADD = ${LIBS} ${DBUS_LIBS}
 
 txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.cc\

@@ -34,6 +34,8 @@ if test "$no_x"; then
 	Make sure you have X and it's headers and libraries(the -devel packages in Linux) installed.])
 fi
 
+PKG_CHECK_MODULES(DBUS, dbus-glib-1)
+
 dnl mail.log filename
 if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
 then
