@@ -104,7 +104,6 @@ Makefile
 doc/Makefile
 doc/txtfetchmailmon.1
 doc/dialogfetchmailmon.1
-doc/wmfetchmailmon.1
 src/Makefile
 sh/Makefile
 ])
