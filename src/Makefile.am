@@ -4,20 +4,7 @@
 ## If you don't want it to overwrite it,
 ## 	Please disable it in the Anjuta project configuration
 
-INCLUDES = -I@x_includes@ -I@wmapp_includes@
-
-
-CFLAGS =\
-	 -Wall -Wimplicit -Wreturn-type -Wunused -Wswitch -Wcomment -Wuninitialized -Wparentheses -Wtraditional -Wpointer-arith -Wmissing-prototypes\
-	 -O1\
-	 -g
-
-CXXFLAGS =\
-	 -Wall -Wimplicit -Wreturn-type -Wunused -Wswitch -Wcomment -Wuninitialized -Wparentheses -Wtraditional -Wpointer-arith -Wmissing-prototypes\
-	 -O1\
-	 -g
-
-bin_PROGRAMS = txtfetchmailmon wmfetchmailmon
+bin_PROGRAMS = txtfetchmailmon 
 
 txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.cc\
@@ -37,24 +24,4 @@ txtfetchmailmon_SOURCES = \
 txtfetchmailmon_LDFLAGS = 
 
 txtfetchmailmon_LDADD = 
-
-
-wmfetchmailmon_SOURCES = \
-	wmfetchmailmon.cc\
-	version.cc\
-	version.h\
-	Controller.cc\
-	Controller.h\
-	ControllerDockApp.cc\
-	ControllerDockApp.h\
-	MailLogScanner.cc\
-	MailLogScanner.h\
-	SyslogReader.cc\
-	SyslogReader.h\
-	SyntaxError.cc\
-	SyntaxError.h
-
-wmfetchmailmon_LDFLAGS = 
-
-wmfetchmailmon_LDADD = -L@wmapp_libraries@ -lwmapp -L@x_libraries@ -lX11 -lXext -lXpm
 

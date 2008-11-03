@@ -33,36 +33,6 @@ if test "$no_x"; then
 	AC_MSG_ERROR([The path for the X11 files not found!
 	Make sure you have X and it's headers and libraries(the -devel packages in Linux) installed.])
 fi
-AC_SUBST(x_libraries)
-AC_SUBST(x_includes)
-
-dnl WMApp library
-AC_ARG_WITH(wmapp,[  --with-wmapp=path       WMApp library path])
-AC_MSG_CHECKING([WMApp directory])
-if test "x$with_wmapp" = "xyes"; then
-  AC_MSG_RESULT([not set explicitly.])
-  AC_MSG_ERROR([WMApp library is required and could not be automatically found. Use '--with-wmapp=path' option.])
-fi
-if test "x$with_wmapp" = "xno"; then
-  AC_MSG_RESULT([disabled.])
-  AC_MSG_ERROR([WMApp library is required. Use '--with-wmapp=path' option.])
-fi
-if test "x$with_wmapp" != "x"; then
-  AC_MSG_RESULT("WMApp prefix path is $with_wmapp")
-  here=`pwd`
-  cd /tmp
-  if test -d "$with_wmapp"; then
-    wmapp_libraries=$with_wmapp ; AC_SUBST(wmapp_libraries)
-    wmapp_includes=$with_wmapp ; AC_SUBST(wmapp_includes)
-  else
-     AC_MSG_ERROR([$with_wmapp is not an ABSOLUTE directory (must begin with '/'). Check '--with-wmapp' argument.])
-  fi
-  cd $here
-else
-  AC_MSG_ERROR([WMApp library is required and could not be automatically found. Use '--with-wmapp=path' option.])
-fi
-
-dnl AC_CHECK_HEADERS(wmapp.h,,AC_MSG_ERROR("WMApp library required"))
 
 dnl mail.log filename
 if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
