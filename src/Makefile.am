@@ -7,7 +7,18 @@
 bin_PROGRAMS = fetchmailmond txtfetchmailmon 
 
 fetchmailmond_SOURCES = \
-	fetchmailmond.cc
+	fetchmailmond.cc\
+	fetchmailmon.h\
+	version.cc\
+	version.h\
+	MailLogScanner.cc\
+	MailLogScanner.h\
+	ControllerDBusSimple.cc\
+	ControllerDBusSimple.h\
+	SyslogReader.cc\
+	SyslogReader.h\
+	SyntaxError.cc\
+	SyntaxError.h
 
 fetchmailmond_CXXFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
 fetchmailmond_LDADD = ${LIBS} ${DBUS_LIBS}
