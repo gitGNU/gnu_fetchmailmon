@@ -1,10 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 
-## Created by Anjuta - will be overwritten
-## If you don't want it to overwrite it,
-## 	Please disable it in the Anjuta project configuration
-
 bin_PROGRAMS = fetchmailmond txtfetchmailmon 
+
+BUILT_SOURCES = fetchmailmond_dbus_client_glue.h fetchmailmond_dbus_server_glue.h
+
+EXTRA_DIST = fetchmailmond-infos.xml
+
+fetchmailmond_dbus_client_glue.h: $(srcdir)/fetchmailmond-infos.xml
+	dbus-binding-tool --mode=glib-client --output=$@ fetchmailmond-infos.xml
+
+fetchmailmond_dbus_server_glue.h: $(srcdir)/fetchmailmond-infos.xml
+	dbus-binding-tool --mode=glib-server --prefix=fetchmailmond --output=$@ fetchmailmond-infos.xml
 
 fetchmailmond_SOURCES = \
 	fetchmailmond.cc\
@@ -41,3 +47,4 @@ txtfetchmailmon_LDFLAGS =
 
 txtfetchmailmon_LDADD = 
 
+CLEAN_FILES = $(BUILT_SOURCES)
