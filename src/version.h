@@ -16,7 +16,15 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <cstdio>
+#include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
 /// Print the version message
 void version (FILE * out);
+
+#ifdef __cplusplus
+}
+#endif
