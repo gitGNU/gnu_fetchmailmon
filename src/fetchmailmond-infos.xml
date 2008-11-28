@@ -3,21 +3,13 @@
 <node name="/org/fetchmail/FetchmailMon">
 	<interface name="org.fetchmail.FetchmailMon">
 		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server"/>
-		<!--
-		<method name="EchoString">
-			<arg type="s" name="original" direction="in" />
-			<arg type="s" name="echo" direction="out" />
-		</method>
-<method name="HelloWorld">
-<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="hello_world"/>
-<arg type="s" name="name" direction="in"/>
-<arg type="s" name="hello" direction="out"/>
-</method>
-		-->
-		<method name="EchoSignal"/>
 		<!-- Add more methods/signals if you want -->
-		<signal name="Ping">
-			<arg type="i" name="alive" direction="out"/>
+	</interface>
+	<interface name="org.fetchmail.FetchmailMonSimple">
+		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server_simple"/>
+		<signal name="DownloadedMessages">
+			<arg type="s" name="login" direction="out"/>
+			<arg type="s" name="server" direction="out"/>
 		</signal>
 	</interface>
 </node>

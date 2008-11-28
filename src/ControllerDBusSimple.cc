@@ -142,7 +142,7 @@ ControllerDBusSimple::emitDownloadedMessages()
          percentSize, _size);
   // create a signal and check for errors 
    msg = dbus_message_new_signal(DBUS_FETCHMAILMON_PATH,
-         DBUS_FETCHMAILMON_IFACE,
+         DBUS_FETCHMAILMONSIMPLE_IFACE,
          "DownloadedMessages");
    if (NULL == msg) 
    { 
@@ -151,7 +151,6 @@ ControllerDBusSimple::emitDownloadedMessages()
    }
 
    // append arguments onto signal
-   /*
    dbus_message_iter_init_append(msg, &args);
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &login)) { 
       fprintf(stderr, "Out Of Memory!\n"); 
@@ -161,6 +160,7 @@ ControllerDBusSimple::emitDownloadedMessages()
       fprintf(stderr, "Out Of Memory!\n"); 
       exit(1);
    }
+   /*
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbDownloadedMessages)) { 
       fprintf(stderr, "Out Of Memory!\n"); 
       exit(1);

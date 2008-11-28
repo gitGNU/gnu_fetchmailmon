@@ -15,7 +15,8 @@ fetchmailmond_dbus_server_glue.h: $(srcdir)/fetchmailmond-infos.xml
 fetchmailmond_SOURCES = \
 	fetchmailmond.cc\
 	fetchmailmon.h\
-	version.cc\
+	fetchmailmond_dbus_server_glue.h\
+	version.c\
 	version.h\
 	MailLogScanner.cc\
 	MailLogScanner.h\
@@ -30,21 +31,13 @@ fetchmailmond_CXXFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
 fetchmailmond_LDADD = ${LIBS} ${DBUS_LIBS}
 
 txtfetchmailmon_SOURCES = \
-	txtfetchmailmon.cc\
-	version.cc\
-	version.h\
-	Controller.h\
-	ControllerText.cc\
-	ControllerText.h\
-	MailLogScanner.cc\
-	MailLogScanner.h\
-	SyslogReader.cc\
-	SyslogReader.h\
-	SyntaxError.cc\
-	SyntaxError.h
-
+	txtfetchmailmon.c\
+	fetchmailmond_dbus_client_glue.h\
+	version.c\
+	version.h
+	
 txtfetchmailmon_LDFLAGS = 
-
-txtfetchmailmon_LDADD = 
+txtfetchmailmon_CFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
+txtfetchmailmon_LDADD = ${LIBS} ${DBUS_LIBS}
 
 CLEAN_FILES = $(BUILT_SOURCES)
