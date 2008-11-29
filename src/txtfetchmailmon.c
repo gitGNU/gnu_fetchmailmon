@@ -21,6 +21,7 @@
 
 #include <unistd.h>
 
+#include "marshall.h"
 #include "fetchmailmond_dbus_client_glue.h"
 #include "fetchmailmon.h"
 #include "version.h"
@@ -122,6 +123,9 @@ main(int argc, char *argv[])
   if (proxy == NULL)
     die ("Failed to create proxy for name owner", error);
 
+  // add marshaller
+  dbus_g_object_register_marshaller (g_cclosure_user_marshal_VOID__STRING_STRING,
+                                     G_TYPE_NONE, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INVALID);
 
   //attach to a signal
   dbus_g_proxy_add_signal(/* Proxy to use */

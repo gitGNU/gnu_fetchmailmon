@@ -5,3 +5,4 @@ txtfetchmailmon
 .deps/
 # Generated
 fetchmailmond_dbus_*_glue.h
+marshall.[ch]

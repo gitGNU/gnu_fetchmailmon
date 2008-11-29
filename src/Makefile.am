@@ -2,15 +2,25 @@
 
 bin_PROGRAMS = fetchmailmond txtfetchmailmon 
 
-BUILT_SOURCES = fetchmailmond_dbus_client_glue.h fetchmailmond_dbus_server_glue.h
+BUILT_SOURCES = 
 
-EXTRA_DIST = fetchmailmond-infos.xml
+EXTRA_DIST = fetchmailmond-infos.xml marshall.list
 
 fetchmailmond_dbus_client_glue.h: $(srcdir)/fetchmailmond-infos.xml
 	dbus-binding-tool --mode=glib-client --output=$@ fetchmailmond-infos.xml
 
 fetchmailmond_dbus_server_glue.h: $(srcdir)/fetchmailmond-infos.xml
 	dbus-binding-tool --mode=glib-server --prefix=fetchmailmond --output=$@ fetchmailmond-infos.xml
+
+BUILT_SOURCES += fetchmailmond_dbus_client_glue.h fetchmailmond_dbus_server_glue.h
+
+marshall.h: $(srcdir)/marshall.list
+	glib-genmarshal --header marshall.list > $@
+
+marshall.c: $(srcdir)/marshall.list
+	glib-genmarshal --body marshall.list > $@
+
+BUILT_SOURCES += marshall.c marshall.h
 
 fetchmailmond_SOURCES = \
 	fetchmailmond.cc\
@@ -33,6 +43,8 @@ fetchmailmond_LDADD = ${LIBS} ${DBUS_LIBS}
 txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.c\
 	fetchmailmond_dbus_client_glue.h\
+	marshall.c\
+	marshall.h\
 	version.c\
 	version.h
 	
