@@ -8,8 +8,13 @@
 	<interface name="org.fetchmail.FetchmailMonSimple">
 		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server_simple"/>
 		<signal name="DownloadedMessages">
-			<arg type="s" name="login" direction="out"/>
-			<arg type="s" name="server" direction="out"/>
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="nbDownloadedMessages"/>
+			<arg type="i" name="nbMessages"/>
+			<arg type="i" name="percentMess"/>
+			<arg type="i" name="percentSize"/>
+			<arg type="i" name="size"/>
 		</signal>
 	</interface>
 </node>
