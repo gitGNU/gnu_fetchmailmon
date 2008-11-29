@@ -92,11 +92,17 @@ static GMainLoop *loop = NULL;
 
 static void downloadedMessagesReceptionHandler(DBusGProxy* proxy,
 				 const gchar *login,
-				 const gchar *server) 
+				 const gchar *server,
+				 int nbDownloadedMessages,
+				 int nbMessages,
+			 	 int percentMess,
+				 int percentSize,
+				 int size) 
 {
-  g_printf("downloadedMessagesReceptionHandler called with datas : \n");
-  g_printf("%s\n", login);
-  g_printf("%s\n", server);
+  printf("%s@%s: %d of %d (%d%%), %d%% of %d octets\n",
+         login, server,
+         nbDownloadedMessages, nbMessages, percentMess,
+         percentSize, size);
 }
 
 int
@@ -124,8 +130,10 @@ main(int argc, char *argv[])
     die ("Failed to create proxy for name owner", error);
 
   // add marshaller
-  dbus_g_object_register_marshaller (g_cclosure_user_marshal_VOID__STRING_STRING,
-                                     G_TYPE_NONE, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INVALID);
+  dbus_g_object_register_marshaller (g_cclosure_user_marshal_VOID__STRING_STRING_INT_INT_INT_INT_INT,
+                                     G_TYPE_NONE,
+                                     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
+                                     G_TYPE_INVALID);
 
   //attach to a signal
   dbus_g_proxy_add_signal(/* Proxy to use */
@@ -133,8 +141,7 @@ main(int argc, char *argv[])
 			  /* Signal name */
 			  "DownloadedMessages",
 			  /* Will receive arguments */
-			  G_TYPE_STRING,
-			  G_TYPE_STRING,
+			  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
 			  /* Termination of the argument list */
 			  G_TYPE_INVALID);
 

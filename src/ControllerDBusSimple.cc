@@ -22,6 +22,8 @@
 
 #include <iostream>
 
+#include <glib.h>
+
 #include "fetchmailmon.h"
 
 #include "ControllerDBusSimple.h"
@@ -136,7 +138,7 @@ ControllerDBusSimple::emitDownloadedMessages()
   login = _login.c_str();
   server = _server.c_str();
 
-  printf("%s@%s: %d of %d (%d%%), %d%% of %d octets\n",
+  g_debug("%s@%s: %d of %d (%d%%), %d%% of %d octets",
          _login.c_str(), _server.c_str(),
          _nbDownloadedMessages, _nbMessages, percentMess,
          percentSize, _size);
@@ -146,56 +148,49 @@ ControllerDBusSimple::emitDownloadedMessages()
          "DownloadedMessages");
    if (NULL == msg) 
    { 
-      fprintf(stderr, "Message Null\n"); 
+      g_critical("Message Null"); 
       exit(1); 
    }
 
    // append arguments onto signal
    dbus_message_iter_init_append(msg, &args);
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &login)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &server)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
-   /*
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbDownloadedMessages)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbMessages)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &percentMess)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &percentSize)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_size)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
-
-   if (!dbus_message_set_sender (msg, "org.freedesktop.DBus")) {
-      fprintf(stderr, "Out Of Memory!\n"); 
-      exit(1);
-   }
-   */
 
    // send the message and flush the connection
    if (!dbus_connection_send(_conn, msg, &serial)) { 
-      fprintf(stderr, "Out Of Memory!\n"); 
+      g_critical("Out Of Memory!"); 
       exit(1);
    }
    dbus_connection_flush(_conn);
    
    // free the message 
    dbus_message_unref(msg);
-   std::clog << "DBus message sent" << std::endl;
+   g_debug("DBus message sent");
 }
