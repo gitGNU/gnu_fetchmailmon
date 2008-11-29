@@ -72,7 +72,19 @@ class ControllerDBusSimple : public Controller
  protected:
 
   /**
-   * Print the number of downloaded messages
+   * Signal new fetch.
+   */
+  void emitNewFetch();
+  /**
+   * Signal new message.
+   */
+  void emitNewMessage();
+  /**
+   * Signal message flushed.
+   */
+  void emitMessageFlushed();
+  /**
+   * Signal the number of downloaded messages.
    */
   void emitDownloadedMessages();
 

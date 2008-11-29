@@ -3,7 +3,21 @@
 <node name="/org/fetchmail/FetchmailMon">
 	<interface name="org.fetchmail.FetchmailMon">
 		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server"/>
-		<!-- Add more methods/signals if you want -->
+		<signal name="NewFetch">
+			<arg type="i" name="number"/>
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="size"/>
+		</signal>
+		<signal name="NewMessage">
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="index"/>
+			<arg type="i" name="number"/>
+			<arg type="i" name="size"/>
+		</signal>
+		<signal name="MessageFlushed">
+		</signal>
 	</interface>
 	<interface name="org.fetchmail.FetchmailMonSimple">
 		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server_simple"/>
