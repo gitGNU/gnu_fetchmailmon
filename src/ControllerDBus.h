@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
+ *  Copyright (C) 2008 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,14 @@
 
 #include <string>
 
+#include <dbus/dbus.h>
+
 using namespace std;
 
 #include "Controller.h"
  
 /**
+ * Text controller.
  */
 class ControllerDBus : public Controller
 {
@@ -69,7 +72,19 @@ class ControllerDBus : public Controller
  protected:
 
   /**
-   * Print the number of downloaded messages
+   * Signal new fetch.
+   */
+  void emitNewFetch();
+  /**
+   * Signal new message.
+   */
+  void emitNewMessage();
+  /**
+   * Signal message flushed.
+   */
+  void emitMessageFlushed();
+  /**
+   * Signal the number of downloaded messages.
    */
   void emitDownloadedMessages();
 

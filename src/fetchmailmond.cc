@@ -25,9 +25,11 @@
 
 #include <unistd.h>
 
+#include <glib.h>
+
 #include "version.h"
 #include "Controller.h"
-#include "ControllerDBusSimple.h"
+#include "ControllerDBus.h"
 #include "MailLogScanner.h"
 
 #include "fetchmailmon.h"
@@ -96,9 +98,9 @@ processArgs(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-  Controller *controller = NULL;
-  MailLogScanner *scanner = NULL;
-     DBusObjectPathVTable fetchmailmon_vtable = {NULL, NULL, NULL, NULL, NULL, NULL };
+   Controller *controller = NULL;
+   MailLogScanner *scanner = NULL;
+   DBusObjectPathVTable fetchmailmon_vtable = {NULL, NULL, NULL, NULL, NULL, NULL };
    DBusError err;
    DBusConnection* conn;
    int ret;
@@ -125,8 +127,12 @@ main(int argc, char *argv[])
    if (!dbus_connection_register_object_path(conn,  DBUS_FETCHMAILMON_PATH,
        					    &fetchmailmon_vtable, NULL))
       exit(1);
-sleep(5);
-  controller = new ControllerDBusSimple(conn);
+      
+   g_debug("Sleeping...");
+   sleep(5);
+   g_debug("Awaken");
+
+  controller = new ControllerDBus(conn);
   processArgs(argc, argv);
 
   if (file != NULL)

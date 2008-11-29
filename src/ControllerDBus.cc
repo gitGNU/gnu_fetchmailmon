@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
+ *  Copyright (C) 2008 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,14 @@
  */
  
 
+#include <cstdlib>
 #include <cstdio>
+
+#include <iostream>
+
+#include <glib.h>
+
+#include "fetchmailmon.h"
 
 #include "ControllerDBus.h"
 
@@ -53,7 +60,8 @@ ControllerDBus::newFetch(int number,
   _nbDownloadedMessages = 0;
   _sizeDownloaded = 0;
 
-  printDownloadedMessages();
+  emitNewFetch();
+  emitDownloadedMessages();
 }
 
 /**
@@ -84,6 +92,8 @@ ControllerDBus::newMessage(const char *login,
   // Set the number of downloaded messages
   // NB: the current message is not downloaded
   _nbDownloadedMessages = index - 1;
+  
+  emitNewMessage();
 }
 
 /**
@@ -99,19 +109,173 @@ ControllerDBus::messageFlushed()
   // To avoid eroneous future usage, reset the current size
   _sizeCurrent = 0;
 
-  printDownloadedMessages();
+  emitMessageFlushed();
+  emitDownloadedMessages();
 }
 
 
 /**
- * Print the number of downloaded messages
+ * Signal message is flushed.
  *
  */
 void
-ControllerDBus::printDownloadedMessages()
+ControllerDBus::emitNewFetch()
 {
-  int percentMess = 0;
-  int percentSize = 0;
+   const char *login = NULL;
+   const char *server = NULL;
+   dbus_uint32_t serial = 0; // unique number to associate replies with requests
+   DBusMessage* msg;
+   DBusMessageIter args;
+   
+   login = _login.c_str();
+   server = _server.c_str();
+   
+   // create a signal and check for errors 
+   msg = dbus_message_new_signal(DBUS_FETCHMAILMON_PATH,
+         DBUS_FETCHMAILMON_IFACE,
+         "NewFetch");
+   if (NULL == msg) 
+   { 
+      g_critical("Message Null"); 
+      exit(1); 
+   }
+
+   // append arguments onto signal
+   dbus_message_iter_init_append(msg, &args);
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbMessages)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &login)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &server)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_size)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+
+   // send the message and flush the connection
+   if (!dbus_connection_send(_conn, msg, &serial)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   dbus_connection_flush(_conn);
+   
+   // free the message 
+   dbus_message_unref(msg);
+}
+
+/**
+ * Signal message is flushed.
+ *
+ */
+void
+ControllerDBus::emitNewMessage()
+{
+   const char *login = NULL;
+   const char *server = NULL;
+   dbus_uint32_t index = _nbDownloadedMessages + 1;
+   dbus_uint32_t serial = 0; // unique number to associate replies with requests
+   DBusMessage* msg;
+   DBusMessageIter args;
+
+   login = _login.c_str();
+   server = _server.c_str();
+
+   // create a signal and check for errors 
+   msg = dbus_message_new_signal(DBUS_FETCHMAILMON_PATH,
+         DBUS_FETCHMAILMON_IFACE,
+         "NewMessage");
+   if (NULL == msg) 
+   { 
+      g_critical("Message Null"); 
+      exit(1); 
+   }
+
+   // append arguments onto signal
+   dbus_message_iter_init_append(msg, &args);
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &login)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &server)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &index)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbMessages)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_size)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+
+   // send the message and flush the connection
+   if (!dbus_connection_send(_conn, msg, &serial)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   dbus_connection_flush(_conn);
+   
+   // free the message 
+   dbus_message_unref(msg);
+}
+
+/**
+ * Signal message is flushed.
+ *
+ */
+void
+ControllerDBus::emitMessageFlushed()
+{
+   dbus_uint32_t serial = 0; // unique number to associate replies with requests
+   DBusMessage* msg;
+
+   // create a signal and check for errors 
+   msg = dbus_message_new_signal(DBUS_FETCHMAILMON_PATH,
+         DBUS_FETCHMAILMON_IFACE,
+         "MessageFlushed");
+   if (NULL == msg) 
+   { 
+      g_critical("Message Null"); 
+      exit(1); 
+   }
+
+   // send the message and flush the connection
+   if (!dbus_connection_send(_conn, msg, &serial)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   dbus_connection_flush(_conn);
+   
+   // free the message 
+   dbus_message_unref(msg);
+}
+
+/**
+ * Emit the number of downloaded messages
+ *
+ */
+void
+ControllerDBus::emitDownloadedMessages()
+{
+  dbus_uint32_t percentMess = 0;
+  dbus_uint32_t percentSize = 0;
+  const char *login = NULL;
+  const char *server = NULL;
+  dbus_uint32_t serial = 0; // unique number to associate replies with requests
+  DBusMessage* msg;
+  DBusMessageIter args;
 
   // Compute percentage
   if (_nbMessages > 0)
@@ -123,9 +287,61 @@ ControllerDBus::printDownloadedMessages()
     percentSize = _sizeDownloaded * 100 / _size;
   else
     percentSize = -1;
+  login = _login.c_str();
+  server = _server.c_str();
 
-  printf("%s@%s: %d of %d (%d%%), %d%% of %d octets\n",
+  g_debug("%s@%s: %d of %d (%d%%), %d%% of %d octets",
          _login.c_str(), _server.c_str(),
          _nbDownloadedMessages, _nbMessages, percentMess,
          percentSize, _size);
+   // create a signal and check for errors 
+   msg = dbus_message_new_signal(DBUS_FETCHMAILMON_PATH,
+         DBUS_FETCHMAILMONSIMPLE_IFACE,
+         "DownloadedMessages");
+   if (NULL == msg) 
+   { 
+      g_critical("Message Null"); 
+      exit(1); 
+   }
+
+   // append arguments onto signal
+   dbus_message_iter_init_append(msg, &args);
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &login)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &server)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbDownloadedMessages)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_nbMessages)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &percentMess)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &percentSize)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_INT32, &_size)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+
+   // send the message and flush the connection
+   if (!dbus_connection_send(_conn, msg, &serial)) { 
+      g_critical("Out Of Memory!"); 
+      exit(1);
+   }
+   dbus_connection_flush(_conn);
+   
+   // free the message 
+   dbus_message_unref(msg);
 }
