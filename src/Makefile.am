@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 bin_PROGRAMS = fetchmailmond txtfetchmailmon 
+check_PROGRAMS = txtmainloop
 
 BUILT_SOURCES = 
 
@@ -51,5 +52,9 @@ txtfetchmailmon_SOURCES = \
 txtfetchmailmon_LDFLAGS = 
 txtfetchmailmon_CFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
 txtfetchmailmon_LDADD = ${LIBS} ${DBUS_LIBS}
+
+txtmainloop_SOURCES = txtmainloop.c
+txtmainloop_CFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
+txtmainloop_LDADD = ${LIBS} ${DBUS_LIBS}
 
 CLEAN_FILES = $(BUILT_SOURCES)
