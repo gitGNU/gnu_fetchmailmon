@@ -50,28 +50,85 @@ static GMainLoop *loop = NULL;
 static gboolean vik_debug = FALSE;
 static gboolean vik_verbose = FALSE;
 static gboolean vik_version = FALSE;
+static GList *filenames = NULL;
+static GList *commands = NULL;
+
+static gboolean
+parse_filename (const gchar *option_name,
+                const gchar *value,
+                gpointer data,
+                GError **error);
+static gboolean
+parse_command (const gchar *option_name,
+               const gchar *value,
+               gpointer data,
+               GError **error);
+
 static GOptionEntry entries[] = 
 {
   { "debug", 'd', 0, G_OPTION_ARG_NONE, &vik_debug, N_("Enable debug output"), NULL },
   { "verbose", 'V', 0, G_OPTION_ARG_NONE, &vik_verbose, N_("Enable verbose output"), NULL },
   { "version", 'v', 0, G_OPTION_ARG_NONE, &vik_version, N_("Show version"), NULL },
+  { "command", 'c', 0, G_OPTION_ARG_CALLBACK, parse_command, N_("Enable verbose output"), NULL },
+  { "file", 'f', 0, G_OPTION_ARG_CALLBACK, parse_filename, N_("Show version"), NULL },
   { NULL }
 };
 
+static gboolean
+parse_filename (const gchar *option_name,
+                const gchar *value,
+                gpointer data,
+                GError **error)
+{
+    g_debug ( "parse_filename: %s", value );
+	filenames = g_list_append ( filenames, g_strdup ( value ) );
+}
+
+static gboolean
+parse_command (const gchar *option_name,
+               const gchar *value,
+               gpointer data,
+               GError **error)
+{
+    g_debug ( "parse_filename: %s", value );
+	commands = g_list_append ( commands, g_strdup ( value ) );
+}
+
 GIOChannel *
-create_tailed_io( const char *filename )
+create_command_io( const char *command )
 {
 	GIOChannel *result = NULL;
-	const gchar *argv[] = { "/usr/bin/tail", "-F", filename, NULL };
+	gchar **argv = NULL;
+	gint argc = 0;
 	GPid child_pid;
 	gint tail_stdout;
 	GError *error = NULL;
+	
+	g_debug ( "create_command_io: %s", command );
+	if ( !g_shell_parse_argv ( command, &argc, &argv, &error ) )
+		die("Parsing command line", error );
 	
 	if ( !g_spawn_async_with_pipes ( NULL, argv, NULL, 0, NULL, NULL, &child_pid, NULL, &tail_stdout, NULL,
 									 &error ) )
 		die("Creating tail sub-process",error);
 	
+	g_strfreev ( argv ); argv = NULL;
+	
 	result = g_io_channel_unix_new ( tail_stdout );
+	
+	return result;
+}
+
+GIOChannel *
+create_file_io( const char *filename )
+{
+	GIOChannel *result = NULL;
+	GError *error = NULL;
+	
+	g_debug ( "create_file_io: %s", filename );
+	result = g_io_channel_new_file ( filename, "r", &error );
+	if ( error )
+		die("Opening file",error);
 	
 	return result;
 }
@@ -103,6 +160,7 @@ main(int argc, char *argv[])
   GError *error = NULL;
   GOptionContext *context;
   GIOChannel *io_channel = NULL;
+  GList *iter;
 
   context = g_option_context_new ("- test file reading");
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
@@ -115,13 +173,21 @@ main(int argc, char *argv[])
 
   loop = g_main_loop_new (NULL, FALSE);
 
-  int i = 0;
-  for (i=1 ; i < argc ; i++)
+  // Run over commands
+  for (iter = commands ; iter != NULL ; iter = iter->next)
   {
-    const gchar *filename = argv[i];
-    io_channel = create_tailed_io ( filename );
-    g_io_add_watch ( io_channel, G_IO_IN, read_info, filename );
-  }
+    const gchar *input = iter->data;
+    io_channel = create_command_io ( input );
+    g_io_add_watch ( io_channel, G_IO_IN, read_info, input );
+  } 
+
+  // Run over commands
+  for (iter = filenames ; iter != NULL ; iter = iter->next)
+  {
+    const gchar *input = iter->data;
+    io_channel = create_file_io ( input );
+    g_io_add_watch ( io_channel, G_IO_IN, read_info, input );
+  }  	
 
   g_main_loop_run(loop);
   
