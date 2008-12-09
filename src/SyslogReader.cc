@@ -16,6 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <cctype>
@@ -32,12 +36,23 @@ using namespace std;
 
 #include "SyslogReader.h"
 
+const char *SyslogReader::DEFAULT_FILENAME = DEFAULT_MAILLOG_FILENAME;
+
 SyslogReader::SyslogReader(const char *filename, SyslogReader::StartPosition position)
   : _filename(filename), _file(NULL), _position(position), _lastReadLine("")
 {}
 
 SyslogReader::~SyslogReader()
 { closeFile(); }
+
+void
+SyslogReader::proceed()
+{
+  const char *line;
+  line = getLine();
+  if (line != NULL)
+    _scanner->scanLine(line);
+}
 
 const char *
 SyslogReader::getLine()

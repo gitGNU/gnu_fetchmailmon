@@ -20,18 +20,14 @@
 #define MAIL_LOG_SCANNER_H
 
 #include "Controller.h"
-#include "SyslogReader.h"
- 
+
 /**
  * Scanner for mail.log file.
  */
 class MailLogScanner
 {
  public:
-  static const char *DEFAULT_FILENAME;
-
-  MailLogScanner(const char *filename = DEFAULT_FILENAME,
-                 SyslogReader::StartPosition position = SyslogReader::FROM_END);
+  MailLogScanner();
   
   ~MailLogScanner(){}
 
@@ -42,18 +38,13 @@ class MailLogScanner
     { _controller = controller; }
 
   /**
-   * Try to read and scan.
-   */
-  void proceed();
-
- private:
-
-  /**
    * Scan a new line.
    *
    *@param line a complete line
    */
   void scanLine(const char *line);
+
+ private:
 
   bool scanNewFetch(const char *line);
   bool scanNewMessage(const char *line);
@@ -63,11 +54,6 @@ class MailLogScanner
    * The current controller
    */
   Controller *_controller;
-
-  /**
-   * The reader.
-   */
-  SyslogReader _reader;
 };
 
 #endif /* MAIL_LOG_SCANNER_H */

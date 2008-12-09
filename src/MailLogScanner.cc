@@ -30,20 +30,9 @@ using namespace std;
 #include "SyslogReader.h"
 #include "MailLogScanner.h"
 
-const char *MailLogScanner::DEFAULT_FILENAME = DEFAULT_MAILLOG_FILENAME;
-
-MailLogScanner::MailLogScanner(const char *filename, SyslogReader::StartPosition position)
-  : _controller(NULL), _reader(filename, position)
+MailLogScanner::MailLogScanner()
+  : _controller(NULL)
 {}
-
-void
-MailLogScanner::proceed()
-{
-  const char *line;
-  line = _reader.getLine();
-  if (line != NULL)
-    scanLine(line);
-}
 
 /**
  * Scan a new line.
@@ -54,7 +43,7 @@ void
 MailLogScanner::scanLine(const char *line)
 {
   //------------------------------------------------
-  // First, we have to find the begin of the message
+  // First, we have to find the begining of the message
   //------------------------------------------------
   char *begin = NULL;
   // Jump all the logging informations

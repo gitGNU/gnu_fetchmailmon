@@ -26,6 +26,7 @@
 #include "Controller.h"
 #include "ControllerText.h"
 #include "MailLogScanner.h"
+#include "SyslogReader.h"
 
 const char *file = NULL;
 
@@ -93,19 +94,23 @@ main(int argc, char *argv[])
 {
   Controller *controller = new ControllerText();
   MailLogScanner *scanner;
+  SyslogReader *reader;
 
   processArgs(argc, argv);
 
-  if (file != NULL)
-    scanner = new MailLogScanner(file, SyslogReader::FROM_BEGIN);
-  else
-    scanner = new MailLogScanner();
-
+  scanner = new MailLogScanner();
   scanner->setController(controller);
+  
+  if (file != NULL)
+    reader = new SyslogReader(file, SyslogReader::FROM_BEGIN);
+  else
+    reader = new SyslogReader();
+
+  reader->setScanner(scanner);
 
   while (1)
   {
-    scanner->proceed();
+    reader->proceed();
     usleep(10000);
   }
   

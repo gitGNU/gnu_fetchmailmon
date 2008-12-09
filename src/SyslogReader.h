@@ -23,6 +23,8 @@
 
 using namespace std;
 
+#include "MailLogScanner.h"
+
 /**
  * Reader for syslog file.
  *
@@ -36,16 +38,26 @@ class SyslogReader
     FROM_END    //< The file reading start after the current last character
   } StartPosition;
 
-  SyslogReader(const char *filename, StartPosition position=FROM_END);
+  static const char *DEFAULT_FILENAME;
+
+  SyslogReader(const char *filename=DEFAULT_FILENAME, StartPosition position=FROM_END);
 
   ~SyslogReader();
 
+  /**
+   * Set a scanner to feed.
+   */
+  void setScanner(MailLogScanner *scanner)
+    { _scanner = scanner; }
+
+  void proceed();
+
+ private:
   /**
    * Get the new line
    */
   const char *getLine();
 
- private:
   /**
    * Check if something need to be read.
    */
@@ -70,6 +82,11 @@ class SyslogReader
    * The current file descriptor.
    */
   FILE* _file;
+
+  /**
+   * The scanner to feed.
+   */
+  MailLogScanner *_scanner;
 
   /**
    * The required starting position.
