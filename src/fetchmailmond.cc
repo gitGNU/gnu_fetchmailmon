@@ -15,6 +15,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <cstdio>
 #include <cstdlib>
@@ -26,6 +29,7 @@
 #include <unistd.h>
 
 #include <glib.h>
+#include <glib/gi18n.h>
 
 #include "version.h"
 #include "Controller.h"
@@ -35,16 +39,18 @@
 
 #include "fetchmailmon.h"
 
+static gboolean opt_debug = FALSE;
+static gboolean opt_verbose = FALSE;
+static gboolean opt_version = FALSE;
 const char *file = NULL;
 
-/// Print the usage
-/// @param out file the usage must be printed.
-/// @param progName the name of the program.
-static void
-usage(FILE *out, const char *progName)
+static GOptionEntry entries[] = 
 {
-  fprintf(out, "USAGE: %s [-v] [-h] [file]\n", progName);
-}
+  { "debug", 'd', 0, G_OPTION_ARG_NONE, &opt_debug, N_("Enable debug output"), NULL },
+  { "verbose", 'V', 0, G_OPTION_ARG_NONE, &opt_verbose, N_("Enable verbose output"), NULL },
+  { "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_("Show version"), NULL },
+  { NULL }
+};
 
 /**
  *@param argc number of arguments
@@ -53,58 +59,48 @@ usage(FILE *out, const char *progName)
 static void
 processArgs(int argc, char *argv[])
 {
-  extern int optind;
-  int c;
-  int nbErrors = 0;
+  int i;
+  GOptionContext *context = NULL;
+  GError *error = NULL;
 
-  while ((c = getopt(argc, argv, "vh")) != -1)
+  context = g_option_context_new (_("- fetchmail monitor daemon"));
+  // FIXME PACKAGE->GETTEXT_PACKAGE
+  g_option_context_add_main_entries (context, entries, PACKAGE);
+  if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      switch (c)
-        {
-        case 'v': // Version is requested
-          version(stdout);
-          exit(EXIT_SUCCESS);
-          break;
-        case 'h': // Help is requested
-          usage(stdout, argv[0]);
-          exit(EXIT_SUCCESS);
-          break;
-        case '?':
-        default:
-          nbErrors++;
-          break;
-        }
+      gchar *help = g_option_context_get_help (context, TRUE, NULL);
+      g_printerr ("option parsing failed: %s\n", error->message);
+      g_printerr (help);
+      g_free (help); help = NULL;
+      exit (1);
     }
+    
+  if (opt_version)
+  {
+    version(stdout);
+    exit (EXIT_SUCCESS);
+  }
   
-  if (nbErrors > 0)
+  if (1 < argc)
     {
-      usage(stderr, argv[0]);
-      exit(EXIT_FAILURE);
+      file = argv[1];
     }
 
-  if (optind < argc)
-    {
-      file = argv[optind];
-      optind++;
-    }
-
-  while (optind < argc)
+  i = 2;
+  while (i < argc)
     {
       std::cerr << "Warning: argument ignored: "<<  argv[optind]
            << std::endl;
-      optind++;
+      i++;
     }
 }
 
-int
-main(int argc, char *argv[])
+DBusConnection*
+init_dbus()
 {
-   Controller *controller = NULL;
-   MailLogScanner *scanner = NULL;
-   SyslogReader *reader = NULL;
-   DBusObjectPathVTable fetchmailmon_vtable = {NULL, NULL, NULL, NULL, NULL, NULL };
+   static DBusObjectPathVTable fetchmailmon_vtable = {NULL, NULL, NULL, NULL, NULL, NULL };
    DBusError err;
-   DBusConnection* conn;
+   DBusConnection* conn = NULL;
    int ret;
    // initialise the errors
    dbus_error_init(&err);
@@ -130,12 +126,27 @@ main(int argc, char *argv[])
        					    &fetchmailmon_vtable, NULL))
       exit(1);
       
+  return conn;
+}
+
+int
+main(int argc, char *argv[])
+{
+   Controller *controller = NULL;
+   MailLogScanner *scanner = NULL;
+   SyslogReader *reader = NULL;
+   DBusConnection* conn = NULL;
+   
+   processArgs(argc, argv);   
+      
+   // Init DBUS layer
+   conn = init_dbus();
+   
    g_debug("Sleeping...");
    sleep(5);
    g_debug("Awaken");
 
   controller = new ControllerDBus(conn);
-  processArgs(argc, argv);
 
   scanner = new MailLogScanner();
   scanner->setController(controller);
