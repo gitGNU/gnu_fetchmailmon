@@ -45,6 +45,14 @@ AC_DEFINE_UNQUOTED(DEFAULT_MAILLOG_FILENAME,"$DEFAULT_MAILLOG_FILENAME",[Absolut
 dnl We also need this variable to update the man pages
 AC_SUBST(DEFAULT_MAILLOG_FILENAME)
 
+dnl tail command
+dnl "%s" will contain filename
+if test "x$TAIL_COMMAND" = "x"
+then
+  TAIL_COMMAND="/usr/bin/tail -F %s"
+fi
+AC_DEFINE_UNQUOTED(TAIL_COMMAND,"$TAIL_COMMAND",[Command tail.])
+
 dnl Set PACKAGE SOURCE DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 
