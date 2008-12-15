@@ -34,6 +34,9 @@ if test "$no_x"; then
 	Make sure you have X and it's headers and libraries(the -devel packages in Linux) installed.])
 fi
 
+dnl AM_PATH_GLIB_2_0
+PKG_CHECK_MODULES(GLIB, glib-2.0)
+
 dnl mail.log filename
 if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
 then

@@ -4,6 +4,9 @@
 ## If you don't want it to overwrite it,
 ## 	Please disable it in the Anjuta project configuration
 
+AM_CXXFLAGS = ${GLIB_CFLAGS}
+AM_LDFLAGS = ${GLIB_LIBS}
+
 bin_PROGRAMS = txtfetchmailmon 
 
 txtfetchmailmon_SOURCES = \
@@ -19,8 +22,4 @@ txtfetchmailmon_SOURCES = \
 	SyslogReader.h\
 	SyntaxError.cc\
 	SyntaxError.h
-
-txtfetchmailmon_LDFLAGS = 
-
-txtfetchmailmon_LDADD = 
 
