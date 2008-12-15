@@ -32,12 +32,15 @@
 #include "Controller.h"
 #include "ControllerText.h"
 #include "MailLogScanner.h"
-#include "SyslogReader.h"
+
+static GMainLoop *loop = NULL;
+
+static MailLogScanner *scanner = NULL;
 
 static gboolean opt_debug = FALSE;
 static gboolean opt_verbose = FALSE;
 static gboolean opt_version = FALSE;
-const char *file = NULL;
+const gchar *file = DEFAULT_MAILLOG_FILENAME;
 
 static GOptionEntry entries[] = 
 {
@@ -46,6 +49,15 @@ static GOptionEntry entries[] =
   { "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_("Show version"), NULL },
   { NULL }
 };
+
+/* Convenience function to print an error and exit */
+static void
+die (const char *prefix, GError *error) 
+{
+  g_error("%s: %s", prefix, error->message);
+  g_error_free (error);
+  exit(EXIT_FAILURE);
+}
 
 /**
  *@param argc number of arguments
@@ -67,7 +79,7 @@ processArgs(int argc, char *argv[])
       g_printerr ("option parsing failed: %s\n", error->message);
       g_printerr (help);
       g_free (help); help = NULL;
-      exit (1);
+      exit (EXIT_FAILURE);
     }
     
   if (opt_version)
@@ -90,30 +102,76 @@ processArgs(int argc, char *argv[])
     }
 }
 
+static GIOChannel *
+create_command_io( const char *filename )
+{
+	GIOChannel *result = NULL;
+	gchar *command = NULL;
+	gchar **argv = NULL;
+	gint argc = 0;
+	GPid child_pid;
+	gint tail_stdout;
+	GError *error = NULL;
+
+    command = g_strdup_printf (TAIL_COMMAND, filename);
+	
+	g_debug ( "create_command_io: %s", command );
+	if ( !g_shell_parse_argv ( command, &argc, &argv, &error ) )
+		die("Parsing command line", error );
+	
+	g_free (command); command = NULL;
+	
+	if ( !g_spawn_async_with_pipes ( NULL, argv, NULL, (GSpawnFlags)0, NULL, NULL, &child_pid, NULL, &tail_stdout, NULL,
+									 &error ) )
+		die("Creating tail sub-process",error);
+	
+	g_strfreev ( argv ); argv = NULL;
+	
+	result = g_io_channel_unix_new ( tail_stdout );
+	
+	return result;
+}
+
+static gboolean
+read_info (GIOChannel *source,
+           GIOCondition condition,
+           gpointer data)
+{
+	GIOStatus status;
+	GString *buff = g_string_new ( NULL );
+	gsize pos = 0;
+	const gchar *filename = (const gchar *)data;
+	GError *error = NULL;
+
+    g_debug("read_info...");	
+    status = g_io_channel_read_line_string (source, buff, &pos, &error );
+    g_debug ("Status=%d", status);
+    if ( G_IO_STATUS_ERROR == status )
+        die("Reading line", error);
+    if ( G_IO_STATUS_NORMAL == status ) {
+        g_debug( "Read line on %s: %s", filename, buff->str );
+        scanner->scanLine(buff->str);
+    }
+    g_debug("read_info done.");	
+}
+
 int
 main(int argc, char *argv[])
 {
   Controller *controller = new ControllerText();
-  MailLogScanner *scanner;
-  SyslogReader *reader;
+   GIOChannel *io_channel = NULL;
+
+   loop = g_main_loop_new (NULL, FALSE);
 
   processArgs(argc, argv);
 
   scanner = new MailLogScanner();
   scanner->setController(controller);
   
-  if (file != NULL)
-    reader = new SyslogReader(file, SyslogReader::FROM_BEGIN);
-  else
-    reader = new SyslogReader();
+  io_channel = create_command_io ( file );
+  g_io_add_watch ( io_channel, G_IO_IN, read_info, (gpointer)file );
 
-  reader->setScanner(scanner);
-
-  while (1)
-  {
-    reader->proceed();
-    usleep(10000);
-  }
+  g_main_loop_run(loop);
   
   return EXIT_SUCCESS;
 }

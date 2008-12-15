@@ -18,8 +18,6 @@ txtfetchmailmon_SOURCES = \
 	ControllerText.h\
 	MailLogScanner.cc\
 	MailLogScanner.h\
-	SyslogReader.cc\
-	SyslogReader.h\
 	SyntaxError.cc\
 	SyntaxError.h
 
