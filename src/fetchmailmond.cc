@@ -129,7 +129,7 @@ processArgs(int argc, char *argv[])
   i = 2;
   while (i < argc)
     {
-      std::cerr << "Warning: argument ignored: "<<  argv[optind]
+      std::cerr << "Warning: argument ignored: "<<  argv[i]
            << std::endl;
       i++;
     }
