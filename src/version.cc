@@ -34,7 +34,7 @@ void version (FILE * out)
 #endif
 
   // Copyright notice
-  (void) fputs("Copyright (C) 2003 Guilhem Bonnefille\n"
+  (void) fputs("Copyright (C) 2003-2008 Guilhem Bonnefille\n"
                "This program comes with NO WARRANTY.\n"
                "You may redistribute copies of it under the terms of the\n"
                "GNU General Public License.\n"
