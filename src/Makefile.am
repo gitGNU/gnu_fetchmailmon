@@ -3,6 +3,10 @@
 bin_PROGRAMS = fetchmailmond txtfetchmailmon 
 check_PROGRAMS = txtmainloop
 
+AM_CXXFLAGS = $(DBUS_CFLAGS)
+AM_CFLAGS = $(DBUS_CFLAGS)
+AM_LDFLAGS = $(DBUS_LIBS)
+
 BUILT_SOURCES = 
 
 EXTRA_DIST = fetchmailmond-infos.xml marshall.list
@@ -36,9 +40,6 @@ fetchmailmond_SOURCES = \
 	SyntaxError.cc\
 	SyntaxError.h
 
-fetchmailmond_CXXFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
-fetchmailmond_LDADD = ${LIBS} ${DBUS_LIBS}
-
 txtfetchmailmon_SOURCES = \
 	txtfetchmailmon.c\
 	fetchmailmond_dbus_client_glue.h\
@@ -47,12 +48,6 @@ txtfetchmailmon_SOURCES = \
 	version.c\
 	version.h
 	
-txtfetchmailmon_LDFLAGS = 
-txtfetchmailmon_CFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
-txtfetchmailmon_LDADD = ${LIBS} ${DBUS_LIBS}
-
 txtmainloop_SOURCES = txtmainloop.c
-txtmainloop_CFLAGS = ${CFLAGS} ${DBUS_CFLAGS}
-txtmainloop_LDADD = ${LIBS} ${DBUS_LIBS}
 
 CLEAN_FILES = $(BUILT_SOURCES)
