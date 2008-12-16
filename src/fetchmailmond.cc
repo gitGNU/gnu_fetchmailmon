@@ -35,7 +35,6 @@
 #include "Controller.h"
 #include "ControllerDBus.h"
 #include "MailLogScanner.h"
-#include "SyslogReader.h"
 
 #include "fetchmailmon.h"
 

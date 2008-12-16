@@ -27,7 +27,6 @@ using namespace std;
 #endif
 
 #include "SyntaxError.h"
-#include "SyslogReader.h"
 #include "MailLogScanner.h"
 
 MailLogScanner::MailLogScanner()
