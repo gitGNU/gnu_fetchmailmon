@@ -55,6 +55,14 @@ static GOptionEntry entries[] =
   { NULL }
 };
 
+static gboolean opt_dbus_session = FALSE;
+static DBusBusType dbus_bus_type = DBUS_BUS_SYSTEM;
+static GOptionEntry dbus_entries[] = 
+{
+  { "session", '\0', 0, G_OPTION_ARG_NONE, &opt_dbus_session, N_("Use the session bus (instead of system bus)"), NULL },
+  { NULL }
+};
+
 /* Convenience function to print an error and exit */
 static void
 die (const char *prefix, GError *error) 
@@ -81,14 +89,22 @@ processArgs(int argc, char *argv[])
 {
   int i;
   GOptionContext *context = NULL;
+  GOptionGroup *dbus_group = NULL;
   GError *error = NULL;
 
   context = g_option_context_new (_("- fetchmail monitor daemon"));
   // FIXME PACKAGE->GETTEXT_PACKAGE
   g_option_context_add_main_entries (context, entries, PACKAGE);
+
+  dbus_group = g_option_group_new ("dbus", "DBus options", "Options specific to DBUS", NULL, NULL);
+  g_option_group_add_entries (dbus_group, dbus_entries);
+  g_option_context_add_group (context, dbus_group);
+  dbus_group = NULL; // Managed by context
+
+  // Parse command line
   if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      gchar *help = g_option_context_get_help (context, TRUE, NULL);
+      gchar *help = g_option_context_get_help (context, FALSE, NULL);
       g_printerr ("option parsing failed: %s\n", error->message);
       g_printerr (help);
       g_free (help); help = NULL;
@@ -99,6 +115,10 @@ processArgs(int argc, char *argv[])
   {
     version(stdout);
     exit (EXIT_SUCCESS);
+  }
+  if (opt_dbus_session)
+  {
+    dbus_bus_type = DBUS_BUS_SESSION;
   }
   
   if (1 < argc)
@@ -126,7 +146,7 @@ init_dbus()
    dbus_error_init(&err);
 
    // connect to the bus
-   conn = dbus_bus_get(DBUS_BUS_SESSION, &err);
+   conn = dbus_bus_get(dbus_bus_type, &err);
    if (dbus_error_is_set(&err)) { 
       dbus_die ("Connection Error", &err); 
    }
