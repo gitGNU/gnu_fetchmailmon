@@ -15,27 +15,42 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
 
 #include <unistd.h>
 
+#include <glib.h>
+#include <glib/gi18n.h>
+
 #include "marshall.h"
 #include "fetchmailmond_dbus_client_glue.h"
 #include "fetchmailmon.h"
 #include "version.h"
 
-const char *file = NULL;
+static gboolean opt_debug = FALSE;
+static gboolean opt_verbose = FALSE;
+static gboolean opt_version = FALSE;
 
-/// Print the usage
-/// @param out file the usage must be printed.
-/// @param progName the name of the program.
-static void
-usage(FILE *out, const char *progName)
+static GOptionEntry entries[] = 
 {
-  fprintf(out, "USAGE: %s [-v] [-h]\n", progName);
-}
+  { "debug", 'd', 0, G_OPTION_ARG_NONE, &opt_debug, N_("Enable debug output"), NULL },
+  { "verbose", 'V', 0, G_OPTION_ARG_NONE, &opt_verbose, N_("Enable verbose output"), NULL },
+  { "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_("Show version"), NULL },
+  { NULL }
+};
+
+static gboolean opt_dbus_session = FALSE;
+static DBusBusType dbus_bus_type = DBUS_BUS_SYSTEM;
+static GOptionEntry dbus_entries[] = 
+{
+  { "session", '\0', 0, G_OPTION_ARG_NONE, &opt_dbus_session, N_("Use the session bus (instead of system bus)"), NULL },
+  { NULL }
+};
 
 /**
  *@param argc number of arguments
@@ -44,39 +59,45 @@ usage(FILE *out, const char *progName)
 static void
 processArgs(int argc, char *argv[])
 {
-  extern int optind;
-  int c;
-  int nbErrors = 0;
+  int i;
+  GOptionContext *context = NULL;
+  GOptionGroup *dbus_group = NULL;
+  GError *error = NULL;
 
-  while ((c = getopt(argc, argv, "vh")) != -1)
+  context = g_option_context_new (_("- fetchmail monitor text client"));
+  // FIXME PACKAGE->GETTEXT_PACKAGE
+  g_option_context_add_main_entries (context, entries, PACKAGE);
+
+  dbus_group = g_option_group_new ("dbus", "DBus options", "Options specific to DBUS", NULL, NULL);
+  g_option_group_add_entries (dbus_group, dbus_entries);
+  g_option_context_add_group (context, dbus_group);
+  dbus_group = NULL; // Managed by context
+
+  // Parse command line
+  if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      switch (c)
-        {
-        case 'v': // Version is requested
-          version(stdout);
-          exit(EXIT_SUCCESS);
-          break;
-        case 'h': // Help is requested
-          usage(stdout, argv[0]);
-          exit(EXIT_SUCCESS);
-          break;
-        case '?':
-        default:
-          nbErrors++;
-          break;
-        }
+      gchar *help = g_option_context_get_help (context, FALSE, NULL);
+      g_printerr ("option parsing failed: %s\n", error->message);
+      g_printerr (help);
+      g_free (help); help = NULL;
+      exit (EXIT_FAILURE);
     }
+    
+  if (opt_version)
+  {
+    version(stdout);
+    exit (EXIT_SUCCESS);
+  }
+  if (opt_dbus_session)
+  {
+    dbus_bus_type = DBUS_BUS_SESSION;
+  }
   
-  if (nbErrors > 0)
+  i = 1;
+  while (i < argc)
     {
-      usage(stderr, argv[0]);
-      exit(EXIT_FAILURE);
-    }
-
-  while (optind < argc)
-    {
-      fprintf(stderr, "Warning: argument ignored: %s\n", argv[optind]);
-      optind++;
+      g_printerr ("Warning: argument ignored: %s", argv[i]);
+      i++;
     }
 }
 
@@ -117,7 +138,9 @@ main(int argc, char *argv[])
   
   loop = g_main_loop_new (NULL, FALSE);
 
-  connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+  processArgs(argc, argv);
+
+  connection = dbus_g_bus_get (dbus_bus_type, &error);
   if (connection == NULL)
     die ("Failed to open connection to bus", error);
 
