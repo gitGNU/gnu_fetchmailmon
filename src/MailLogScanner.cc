@@ -15,6 +15,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <cstdio>
 #include <cctype>
@@ -22,12 +25,10 @@
 
 using namespace std;
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "SyntaxError.h"
 #include "MailLogScanner.h"
+
+static const char *FLUSH_WORD = "flushed";
 
 MailLogScanner::MailLogScanner()
   : _controller(NULL)
@@ -154,6 +155,12 @@ MailLogScanner::scanNewMessage(const char *line)
       // Inform the controller
       _controller->newMessage(login, server, index, number, size);
 
+      // Does the line contain the flushed word
+      ptr = strstr(line, FLUSH_WORD);
+      if (ptr != NULL)
+          // Inform the controller
+          _controller->messageFlushed();
+      
       return true;
     }
   else
@@ -163,7 +170,6 @@ MailLogScanner::scanNewMessage(const char *line)
 bool
 MailLogScanner::scanMessageFlushed(const char *line)
 {  
-  const char *FLUSH_WORD = "flushed";
   int ret = 0;
 
   // Check if the first word is the one expected
