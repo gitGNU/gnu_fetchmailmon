@@ -64,7 +64,7 @@ processArgs(int argc, char *argv[])
   GOptionGroup *dbus_group = NULL;
   GError *error = NULL;
 
-  context = g_option_context_new (_("- fetchmail monitor text client"));
+  context = g_option_context_new (_("- synthetic rewrite of mail.log"));
   // FIXME PACKAGE->GETTEXT_PACKAGE
   g_option_context_add_main_entries (context, entries, PACKAGE);
 

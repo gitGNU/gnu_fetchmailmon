@@ -2,7 +2,7 @@
 .SH NAME
 dialogfetchmailmon \- 'dialog' interface to txtfetchmailmon
 .SH SYNOPSIS
-.BI "dialogfetchmailmon [-size|-number] [file]"
+.BI "dialogfetchmailmon [-size|-number]"
 .sp
 .SH DESCRIPTION
 The
@@ -16,7 +16,7 @@ program to display a progression bar.
 .B dialogfetchmailmon
 uses
 .B txtfetchmailmon
-to process mail.log file and extract data.
+to retrieve informations from mail.log.
 If
 .B txtfetchmailmon
 is not on you path (testing?) you can set the
@@ -32,19 +32,12 @@ This is most representative of the time to go.
 \-number
 The progression bar represents a percentage based on the number of emails.
 (DEFAULT)
-.TP
-file
-Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
-
-.SH FILES
-.TP
-@DEFAULT_MAILLOG_FILENAME@
-The default system messages file read.
 
 .SH "SEE ALSO"
 .BR fetchmail (1),
 .BR dialog (1),
-.BR txtfetchmailmon (1)
+.BR txtfetchmailmon (1),
+.BR fetchmailmond (1)
 
 .SH AUTHOR
 This program is developed by Guilhem Bonnefille. See 
@@ -55,7 +48,7 @@ Any correspondence relating to
 this program should be directed to:
 .br
 .I
-Guilhem Bonnefille \<guilhem.bonnefille@free.fr\>
+Guilhem Bonnefille \<guilhem.bonnefille@gmail.com\>
 
 .SH COPYING
 Copyright (c) 1991 Free Software Foundation, Inc.

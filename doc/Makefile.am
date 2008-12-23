@@ -8,14 +8,20 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-man_MANS = txtfetchmailmon.1 \
+man_MANS = fetchmailmond.1 \
+           txtfetchmailmon.1 \
            dialogfetchmailmon.1
 
-EXTRA_DIST = txtfetchmailmon.1.in \
-	         dialogfetchmailmon.1.in
+EXTRA_DIST = fetchmailmond.1.in \
+             txtfetchmailmon.1.in \
+             dialogfetchmailmon.1.in
 
-BUILT_SOURCES = txtfetchmailmon.ps \
-                dialogfetchmailmon.ps
+noinst_DATA = fetchmailmond.ps \
+              txtfetchmailmon.ps \
+              dialogfetchmailmon.ps
+
+fetchmailmond.ps: fetchmailmond.1
+	groff -T ps -t -mandoc $< >$@
 
 txtfetchmailmon.ps: txtfetchmailmon.1
 	groff -T ps -t -mandoc $< >$@
