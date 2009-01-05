@@ -20,6 +20,8 @@ noinst_DATA = fetchmailmond.ps \
               txtfetchmailmon.ps \
               dialogfetchmailmon.ps
 
+CLEANFILES = $(man_MANS) $(noinst_DATA)
+
 fetchmailmond.ps: fetchmailmond.1
 	groff -T ps -t -mandoc $< >$@
 

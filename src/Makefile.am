@@ -35,6 +35,7 @@ fetchmailmond_SOURCES = \
 	version.h\
 	MailLogScanner.cc\
 	MailLogScanner.h\
+	Controller.h\
 	ControllerDBus.cc\
 	ControllerDBus.h\
 	SyntaxError.cc\
