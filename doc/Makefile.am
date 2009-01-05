@@ -17,6 +17,8 @@ EXTRA_DIST = txtfetchmailmon.1.in \
 BUILT_SOURCES = txtfetchmailmon.ps \
                 dialogfetchmailmon.ps
 
+CLEANFILES = $(man_MANS) $(BUILT_SOURCES)
+
 txtfetchmailmon.ps: txtfetchmailmon.1
 	groff -T ps -t -mandoc $< >$@
 
