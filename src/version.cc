@@ -15,6 +15,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <cstdio>
 
@@ -31,7 +34,7 @@ void version (FILE * out)
 #endif
 
   // Copyright notice
-  (void) fputs("Copyright (C) 2003 Guilhem Bonnefille\n"
+  (void) fputs("Copyright (C) 2003-2008 Guilhem Bonnefille\n"
                "This program comes with NO WARRANTY.\n"
                "You may redistribute copies of it under the terms of the\n"
                "GNU General Public License.\n"

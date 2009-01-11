@@ -2,7 +2,7 @@
 .SH NAME
 txtfetchmailmon \- synthetic rewrite of mail.log
 .SH SYNOPSIS
-.BI "txtfetchmailmon [-v] [-h] [file]"
+.BI "txtfetchmailmon [-v] [-h] [-d] [-V] [file]"
 .sp
 .SH DESCRIPTION
 The
@@ -13,11 +13,17 @@ in a simplier and automatically comprehensive format.
 
 .SH OPTIONS
 .TP
-\-v
+\-v, \--version
 Show version informations and terminate.
 .TP
-\-h
+\-h, \--help
 Show help (usage) and terminate.
+.TP
+\-d, \--debug
+Enable debug output.
+.TP
+\-V,\--verbose
+Enable verbose output.
 .TP
 file
 Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
@@ -39,7 +45,7 @@ Any correspondence relating to
 this program should be directed to:
 .br
 .I
-Guilhem Bonnefille \<guilhem.bonnefille@free.fr\>
+Guilhem Bonnefille \<guilhem.bonnefille@gmail.com\>
 
 .SH COPYING
 Copyright (c) 1991 Free Software Foundation, Inc.

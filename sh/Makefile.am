@@ -8,5 +8,7 @@ bin_SCRIPTS = dialogfetchmailmon
 
 EXTRA_DIST = dialogfetchmailmon.sh
 
+CLEANFILES = $(bin_SCRIPTS)
+
 dialogfetchmailmon: dialogfetchmailmon.sh
 	cp $< $@
