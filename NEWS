@@ -1,3 +1,9 @@
+FetchmailMon - 0.7 (2009-01-11)
+  - Suppress WindowMaker applet (DocApp)
+  - Adapt to new format of log
+  - Use GOption pour des options longues
+  - Use tail command to read the log file
+
 FetchmailMon - 0.6 (2003-10-05)
   All tools do not use the standard input but:
   - expect file as comand line argument
