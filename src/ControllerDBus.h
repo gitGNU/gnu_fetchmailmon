@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
+ *  Copyright (C) 2008 Guilhem Bonnefille <guilhem.bonnefille@free.fr>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef CONTROLLER_TEXT_H
-#define CONTROLLER_TEXT_H
+#ifndef CONTROLLER_DBUS_H
+#define CONTROLLER_DBUS_H
 
 #include <string>
+
+#include <dbus/dbus.h>
 
 using namespace std;
 
@@ -28,11 +30,11 @@ using namespace std;
 /**
  * Text controller.
  */
-class ControllerText : public Controller
+class ControllerDBus : public Controller
 {
  public:
-  ControllerText();
-  virtual ~ControllerText(){}
+  ControllerDBus(DBusConnection *_conn);
+  virtual ~ControllerDBus(){}
 
   /**
    * A new fetch begin.
@@ -70,9 +72,21 @@ class ControllerText : public Controller
  protected:
 
   /**
-   * Print the number of downloaded messages
+   * Signal new fetch.
    */
-  void printDownloadedMessages();
+  void emitNewFetch();
+  /**
+   * Signal new message.
+   */
+  void emitNewMessage();
+  /**
+   * Signal message flushed.
+   */
+  void emitMessageFlushed();
+  /**
+   * Signal the number of downloaded messages.
+   */
+  void emitDownloadedMessages();
 
  private:
   /**
@@ -109,6 +123,11 @@ class ControllerText : public Controller
    * Size of the current message.
    */
   int _sizeCurrent;
+  
+  /**
+   * Connection.
+   */
+  DBusConnection *_conn;
 };
 
-#endif /* CONTROLLER_TEXT_H */
+#endif /* CONTROLLER_DBUS_H */

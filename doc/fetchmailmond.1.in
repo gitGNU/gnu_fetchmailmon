@@ -1,15 +1,15 @@
-.TH txtfetchmailmon 1 "@PACKAGE@ @VERSION@"
+.TH fetchmailmond 1 "@PACKAGE@ @VERSION@"
 .SH NAME
-txtfetchmailmon \- synthetic rewrite of mail.log
+fetchmailmond \- fetchmail monitor daemon
 .SH SYNOPSIS
-.BI "txtfetchmailmon [-vhdV] [--session]"
+.BI "fetchmailmond [-vdhV] [--session] [file]"
 .sp
 .SH DESCRIPTION
 The
-.B txtfetchmailmon
-program rewrite the log produced by
+.B fetchmailmond
+daemon monitors the log produced by
 .B fetchmail
-in a simplier and automatically comprehensive format.
+to distribute this information to clients.
 
 .SH OPTIONS
 .TP
@@ -19,18 +19,28 @@ Show version informations and terminate.
 \-h, \--help
 Show help (usage) and terminate.
 .TP
-\-V, \--verbose
-Enable verbose output.
-.TP
 \-d, \--debug
 Enable debug output.
 .TP
+\-V, \--vebose
+Enable verbose output.
+.TP
 \--session
 Use the session bus (instead of system bus).
+.TP
+\--session
+Use the session bus (instead of system bus).
+.TP
+file
+Monitor this file instead of default one (@DEFAULT_MAILLOG_FILENAME@).
+
+.SH FILES
+.TP
+@DEFAULT_MAILLOG_FILENAME@
+The default system messages file read.
 
 .SH "SEE ALSO"
-.BR fetchmail (1), 
-.BR fetchmailmond (1), 
+.BR fetchmail (1),
 .BR dbus-daemon (1)
 
 .SH AUTHOR

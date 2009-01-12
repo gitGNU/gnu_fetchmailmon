@@ -16,7 +16,7 @@ ORIGDIR=`pwd`
 cd $srcdir
 PROJECT=fetchmailmon
 TEST_TYPE=-f
-FILE=src/txtfetchmailmon.cc
+FILE=src/fetchmailmond.cc
 CONFIGURE=configure.in
 
 DIE=0

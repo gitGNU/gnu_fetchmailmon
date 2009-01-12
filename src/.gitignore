@@ -1,2 +1,8 @@
+# Binaries
+fetchmailmond
+txtfetchmailmon
 *.o
+# Generated
 .deps/
+fetchmailmond_dbus_*_glue.h
+marshall.[ch]

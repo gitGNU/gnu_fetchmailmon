@@ -19,9 +19,12 @@
 #include "config.h"
 #endif
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
+
 #include <iostream>
+
+#include <dbus/dbus.h>
 
 #include <unistd.h>
 
@@ -30,8 +33,10 @@
 
 #include "version.h"
 #include "Controller.h"
-#include "ControllerText.h"
+#include "ControllerDBus.h"
 #include "MailLogScanner.h"
+
+#include "fetchmailmon.h"
 
 static GMainLoop *loop = NULL;
 
@@ -50,12 +55,28 @@ static GOptionEntry entries[] =
   { NULL }
 };
 
+static gboolean opt_dbus_session = FALSE;
+static DBusBusType dbus_bus_type = DBUS_BUS_SYSTEM;
+static GOptionEntry dbus_entries[] = 
+{
+  { "session", '\0', 0, G_OPTION_ARG_NONE, &opt_dbus_session, N_("Use the session bus (instead of system bus)"), NULL },
+  { NULL }
+};
+
 /* Convenience function to print an error and exit */
 static void
 die (const char *prefix, GError *error) 
 {
   g_error("%s: %s", prefix, error->message);
   g_error_free (error);
+  exit(EXIT_FAILURE);
+}
+
+static void
+dbus_die (const char *prefix, DBusError *error) 
+{
+  g_error("%s: %s", prefix, error->message);
+  dbus_error_free (error);
   exit(EXIT_FAILURE);
 }
 
@@ -68,14 +89,22 @@ processArgs(int argc, char *argv[])
 {
   int i;
   GOptionContext *context = NULL;
+  GOptionGroup *dbus_group = NULL;
   GError *error = NULL;
 
   context = g_option_context_new (_("- fetchmail monitor daemon"));
   // FIXME PACKAGE->GETTEXT_PACKAGE
   g_option_context_add_main_entries (context, entries, PACKAGE);
+
+  dbus_group = g_option_group_new ("dbus", "DBus options", "Options specific to DBUS", NULL, NULL);
+  g_option_group_add_entries (dbus_group, dbus_entries);
+  g_option_context_add_group (context, dbus_group);
+  dbus_group = NULL; // Managed by context
+
+  // Parse command line
   if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      gchar *help = g_option_context_get_help (context, TRUE, NULL);
+      gchar *help = g_option_context_get_help (context, FALSE, NULL);
       g_printerr ("option parsing failed: %s\n", error->message);
       g_printerr (help);
       g_free (help); help = NULL;
@@ -87,6 +116,10 @@ processArgs(int argc, char *argv[])
     version(stdout);
     exit (EXIT_SUCCESS);
   }
+  if (opt_dbus_session)
+  {
+    dbus_bus_type = DBUS_BUS_SESSION;
+  }
   
   if (1 < argc)
     {
@@ -96,10 +129,38 @@ processArgs(int argc, char *argv[])
   i = 2;
   while (i < argc)
     {
-      std::cerr << "Warning: argument ignored: "<<  argv[optind]
+      std::cerr << "Warning: argument ignored: "<<  argv[i]
            << std::endl;
       i++;
     }
+}
+
+DBusConnection*
+init_dbus()
+{
+   static DBusObjectPathVTable fetchmailmon_vtable = {NULL, NULL, NULL, NULL, NULL, NULL };
+   DBusError err;
+   DBusConnection* conn = NULL;
+   int ret;
+   // initialise the errors
+   dbus_error_init(&err);
+
+   // connect to the bus
+   conn = dbus_bus_get(dbus_bus_type, &err);
+   if (dbus_error_is_set(&err)) { 
+      dbus_die ("Connection Error", &err); 
+   }
+   dbus_error_init (&err);
+   dbus_bus_request_name (conn, DBUS_FETCHMAILMON_IFACE, 0, &err);
+   if (dbus_error_is_set(&err)) { 
+      dbus_die ("Request name Error", &err); 
+   }
+
+   if (!dbus_connection_register_object_path(conn,  DBUS_FETCHMAILMON_PATH,
+       					    &fetchmailmon_vtable, &err))
+      dbus_die ("Registering error", &err);
+      
+  return conn;
 }
 
 static GIOChannel *
@@ -158,12 +219,22 @@ read_info (GIOChannel *source,
 int
 main(int argc, char *argv[])
 {
-  Controller *controller = new ControllerText();
+   Controller *controller = NULL;
+   DBusConnection* conn = NULL;
    GIOChannel *io_channel = NULL;
 
    loop = g_main_loop_new (NULL, FALSE);
 
-  processArgs(argc, argv);
+   processArgs(argc, argv);   
+      
+   // Init DBUS layer
+   conn = init_dbus();
+   
+   g_debug("Sleeping...");
+   sleep(5);
+   g_debug("Awaken");
+
+  controller = new ControllerDBus(conn);
 
   scanner = new MailLogScanner();
   scanner->setController(controller);

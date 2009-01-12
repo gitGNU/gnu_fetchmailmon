@@ -19,7 +19,7 @@
 #include "config.h"
 #endif
 
-#include <cstdio>
+#include <stdio.h>
 
 #include "version.h"
 

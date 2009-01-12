@@ -37,6 +37,9 @@ fi
 dnl AM_PATH_GLIB_2_0
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 
+dnl DBus
+PKG_CHECK_MODULES(DBUS, dbus-glib-1)
+
 dnl mail.log filename
 if test "x$DEFAULT_MAILLOG_FILENAME" = "x"
 then
@@ -113,6 +116,7 @@ AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
 AC_OUTPUT([
 Makefile
 doc/Makefile
+doc/fetchmailmond.1
 doc/txtfetchmailmon.1
 doc/dialogfetchmailmon.1
 src/Makefile

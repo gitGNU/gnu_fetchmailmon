@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<node name="/org/fetchmail/FetchmailMon">
+	<interface name="org.fetchmail.FetchmailMon">
+		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server"/>
+		<signal name="NewFetch">
+			<arg type="i" name="number"/>
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="size"/>
+		</signal>
+		<signal name="NewMessage">
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="index"/>
+			<arg type="i" name="number"/>
+			<arg type="i" name="size"/>
+		</signal>
+		<signal name="MessageFlushed">
+		</signal>
+	</interface>
+	<interface name="org.fetchmail.FetchmailMonSimple">
+		<annotation name="org.freedesktop.DBus.GLib.CSymbol" value="server_simple"/>
+		<signal name="DownloadedMessages">
+			<arg type="s" name="login"/>
+			<arg type="s" name="server"/>
+			<arg type="i" name="nbDownloadedMessages"/>
+			<arg type="i" name="nbMessages"/>
+			<arg type="i" name="percentMess"/>
+			<arg type="i" name="percentSize"/>
+			<arg type="i" name="size"/>
+		</signal>
+	</interface>
+</node>
+
