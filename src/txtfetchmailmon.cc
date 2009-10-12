@@ -59,6 +59,15 @@ die (const char *prefix, GError *error)
   exit(EXIT_FAILURE);
 }
 
+/* Callback to mute log message */
+static void mute_log(const gchar *log_domain,
+                     GLogLevelFlags log_level,
+                     const gchar *message,
+                     gpointer user_data)
+{
+  /* Nothing to do, we just want to mute */
+}
+
 /**
  *@param argc number of arguments
  *@param argv arguments
@@ -87,7 +96,10 @@ processArgs(int argc, char *argv[])
     version(stdout);
     exit (EXIT_SUCCESS);
   }
-  
+
+  if (!opt_debug)
+    g_log_set_handler (NULL, G_LOG_LEVEL_DEBUG, mute_log, NULL);
+
   if (1 < argc)
     {
       file = argv[1];
