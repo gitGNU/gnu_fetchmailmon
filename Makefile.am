@@ -15,13 +15,19 @@ fetchmailmondoc_DATA = \
 	NEWS\
 	TODO
 
-EXTRA_DIST = $(fetchmailmondoc_DATA)
+EXTRA_DIST = $(fetchmailmondoc_DATA) ChangeLog.0
+
+.PHONY: generate-changelog
+generate-changelog:
+	if test -d $(top_srcdir)/.git; then \
+          cd $(top_srcdir) ; sh $(top_srcdir)/maintainer/git2changelog.sh > $(distdir)/c-l; \
+          mv $(distdir)/c-l $(distdir)/ChangeLog; \
+        fi
 
 # Copy all the spec files. Of cource, only one is actually used.
-dist-hook:
+dist-hook: generate-changelog
 	for specfile in *.spec; do \
 		if test -f $$specfile; then \
 			cp -p $$specfile $(distdir); \
 		fi \
 	done
-
